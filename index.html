@@ -19,6 +19,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .app-title{flex:1}
 .app-title h1{font-size:11px;font-weight:600;letter-spacing:.3px;color:#e0e0e0}
 .app-title p{font-size:9px;opacity:.7}
+.hdr-actions{display:flex;gap:6px}
+.hdr-btn{width:36px;height:36px;border-radius:50%;background:#1b2838;border:2px solid #455a64;color:#455a64;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s}
+.hdr-btn svg{width:18px;height:18px}
+.hdr-btn.active{border-color:#66bb6a;color:#66bb6a;background:rgba(46,125,50,.2)}
+.hdr-btn.needs-key{border-color:#ef5350;color:#ef5350;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 
 .main-tabs{display:flex;background:#0d1b2a;border-bottom:2px solid #2d4a6f;padding:0 2px}
 .main-tab{flex:1;padding:12px 4px;border:2px solid transparent;background:transparent;font-size:12px;font-weight:600;color:rgba(255,255,255,.4);cursor:pointer;position:relative;margin-bottom:-2px;border-radius:8px 8px 0 0;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
@@ -36,7 +42,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 .field-group{margin-bottom:12px}
 .field-label{display:block;font-size:10px;color:#888;text-transform:uppercase;margin-bottom:4px;letter-spacing:.5px}
-input[type="text"],input[type="number"],select{width:100%;padding:10px;border:1px solid #2d4a6f;border-radius:6px;font-size:16px;background:#1b2838;color:#e0e0e0;font-family:inherit;outline:none}
+.field-hint{font-size:11px;color:#556;margin-top:4px}
+input[type="text"],input[type="number"],input[type="password"],select{width:100%;padding:10px;border:1px solid #2d4a6f;border-radius:6px;font-size:16px;background:#1b2838;color:#e0e0e0;font-family:inherit;outline:none}
 input:focus,select:focus{border-color:#4fc3f7;box-shadow:0 0 0 1px rgba(79,195,247,.3)}
 select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
 
@@ -49,6 +56,25 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
 .btn-danger{padding:6px 10px;background:rgba(239,83,80,.15);border:1px solid rgba(239,83,80,.3);color:#ef5350;border-radius:6px}
 .btn-row{display:flex;gap:8px}
 .btn-row .btn{flex:1}
+
+/* Setup / Settings Modal */
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:300;align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}
+.modal-box{background:#243447;border-radius:12px;padding:20px;width:100%;max-width:360px;border:1px solid #2d4a6f}
+.modal-title{font-size:18px;font-weight:600;color:#4fc3f7;margin-bottom:4px;text-align:center}
+.modal-sub{font-size:13px;color:#888;margin-bottom:16px;text-align:center}
+.modal-btns{display:flex;gap:10px;margin-top:16px}
+.modal-btns .btn{flex:1;padding:12px}
+.key-status{display:flex;align-items:center;gap:8px;padding:10px;border-radius:6px;margin-bottom:12px;font-size:13px}
+.key-status.connected{background:rgba(76,175,80,.15);border:1px solid rgba(76,175,80,.3);color:#4caf50}
+.key-status.missing{background:rgba(239,83,80,.15);border:1px solid rgba(239,83,80,.3);color:#ef5350}
+.key-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* Error banner */
+.err-banner{display:none;padding:10px 14px;margin:0 12px 0;border-radius:8px;background:rgba(239,83,80,.15);border:1px solid rgba(239,83,80,.3);color:#ef5350;font-size:13px}
+.err-banner.show{display:flex;align-items:center;gap:8px}
+.err-banner svg{width:16px;height:16px;flex-shrink:0}
+.err-banner a{color:#4fc3f7;text-decoration:underline}
 
 .tote-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
 .tote{position:relative;border:2px solid #455a64;border-radius:4px;background:#0d1b2a;overflow:hidden}
@@ -126,7 +152,7 @@ input[type="range"]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;b
 .empty h3{font-size:16px;color:#8899aa;margin-top:12px}
 .empty p{font-size:12px;color:#556;margin-top:4px}
 
-.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;z-index:100;transition:transform .3s ease;pointer-events:none}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;z-index:400;transition:transform .3s ease;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .toast-success{background:#2e7d32;color:#fff;box-shadow:0 4px 20px rgba(46,125,50,.5)}
 .toast svg{width:16px;height:16px}
@@ -136,15 +162,95 @@ input[type="range"]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;b
 .filter-bar select{padding:8px 30px 8px 10px;font-size:14px}
 
 .photo-hint{text-align:center;margin-top:8px;color:#556;font-size:12px}
+
+/* Setup screen */
+.setup-screen{display:none;position:fixed;inset:0;background:#1b2838;z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.setup-screen.show{display:flex}
+.setup-logo{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#1565c0,#0d47a1);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.setup-logo svg{width:32px;height:32px;fill:none;stroke:#fff;stroke-width:2}
+.setup-title{font-size:20px;font-weight:700;color:#e0e0e0;margin-bottom:4px}
+.setup-sub{font-size:13px;color:#888;margin-bottom:24px;text-align:center;max-width:300px}
+.setup-card{background:#243447;border-radius:12px;padding:20px;width:100%;max-width:360px;border:1px solid #2d4a6f}
+.setup-steps{margin-top:16px;font-size:12px;color:#888;line-height:1.8}
+.setup-steps strong{color:#4fc3f7}
+.setup-steps a{color:#4fc3f7}
+
 .hidden{display:none!important}
 </style>
 </head>
 <body>
+
+<!-- ═══ SETUP SCREEN ═══ -->
+<div class="setup-screen" id="setup">
+  <div class="setup-logo"><svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="setup-title">IPS Chemical Inventory</div>
+  <div class="setup-sub">AI-powered tote scanning for accurate chemical billing. One-time setup required.</div>
+  <div class="setup-card">
+    <div class="field-group">
+      <label class="field-label">Anthropic API Key</label>
+      <input type="password" id="setup-key" placeholder="sk-ant-api03-..." autocomplete="off">
+      <div class="field-hint">Stored locally on this device only. Never sent anywhere except Anthropic.</div>
+    </div>
+    <button class="btn btn-green" onclick="saveSetupKey()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      Save & Start
+    </button>
+    <div class="setup-steps">
+      <strong>How to get your key:</strong><br>
+      1. Go to <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br>
+      2. Sign in or create account<br>
+      3. Go to <strong>API Keys</strong><br>
+      4. Create key → copy it here<br><br>
+      ~$0.01 per scan (Claude Sonnet vision)
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SETTINGS MODAL ═══ -->
+<div class="modal" id="settings-modal">
+  <div class="modal-box">
+    <div class="modal-title">Settings</div>
+    <div class="modal-sub">API Key & Configuration</div>
+    <div class="key-status" id="key-status"></div>
+    <div class="field-group">
+      <label class="field-label">Anthropic API Key</label>
+      <input type="password" id="settings-key" placeholder="sk-ant-api03-..." autocomplete="off">
+      <div class="field-hint">Stored locally on this device only.</div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-sec" onclick="closeSettings()">Cancel</button>
+      <button class="btn btn-green" style="padding:12px" onclick="saveSettingsKey()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Save
+      </button>
+    </div>
+    <div style="margin-top:16px;padding-top:12px;border-top:1px solid #2d4a6f">
+      <button class="btn btn-danger" style="width:100%;padding:10px;justify-content:center" onclick="removeKey()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Remove API Key
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
 <div id="app">
   <div class="app-header">
     <div class="hdr-icon"><svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div class="app-title"><h1>INTELLIGENT PETROLEUM SOLUTIONS LLC</h1><p>Chemical Inventory</p></div>
+    <div class="hdr-actions">
+      <button class="hdr-btn" id="gear-btn" onclick="openSettings()" title="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
   </div>
+
+  <!-- Error Banner -->
+  <div class="err-banner" id="err-banner">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <span id="err-msg"></span>
+  </div>
+
   <div class="main-tabs">
     <button class="main-tab active" data-tab="scan" onclick="switchTab('scan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan</button>
     <button class="main-tab" data-tab="inventory" onclick="switchTab('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Inventory<span class="tab-badge hidden" id="inv-badge"></span></button>
@@ -197,17 +303,79 @@ input[type="range"]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;b
   <!-- SUMMARY TAB -->
   <div class="tab-content" id="tab-summary"><div class="body" id="sbody"></div></div>
 </div>
+
 <div class="toast toast-success" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span id="tmsg">Added</span></div>
 
 <script>
 const CC={"Friction Reducer":"#ff6b35","Clay Stabilizer":"#4db6ac","Biocide":"#ef5350","Scale Inhibitor":"#42a5f5","Corrosion Inhibitor":"#ba68c8","Surfactant":"#66bb6a","Pipe-on-Pipe Lube":"#ffa726","HCl Acid":"#ef5350","Linear Gel":"#4fc3f7","Crosslinker":"#455a64","Breaker":"#8d6e63","Iron Control":"#b5838d","H2S Scavenger":"#78909c","Defoamer":"#ce93d8","Emulsion Breaker":"#90caf9","KCl / Salt":"#80cbc4","Other":"#90a4ae"};
 let inv=[],eid=null,anl=null,ib64=null,itp="image/jpeg";
 
+// ═══ API KEY MANAGEMENT ═══
+function getKey(){return localStorage.getItem("ips-ci-key")||"";}
+function setKey(k){localStorage.setItem("ips-ci-key",k);updateGear();}
+function hasKey(){return getKey().startsWith("sk-");}
+
+function updateGear(){
+  const g=document.getElementById('gear-btn');
+  if(hasKey()){g.classList.add('active');g.classList.remove('needs-key');}
+  else{g.classList.remove('active');g.classList.add('needs-key');}
+}
+
+function checkSetup(){
+  if(!hasKey())document.getElementById('setup').classList.add('show');
+  else document.getElementById('setup').classList.remove('show');
+  updateGear();
+}
+
+function saveSetupKey(){
+  const k=document.getElementById('setup-key').value.trim();
+  if(!k.startsWith('sk-')){showToast('Key should start with sk-');return;}
+  setKey(k);
+  document.getElementById('setup').classList.remove('show');
+  showToast('API Key Saved ✓');
+}
+
+function openSettings(){
+  const m=document.getElementById('settings-modal');
+  const s=document.getElementById('key-status');
+  const inp=document.getElementById('settings-key');
+  if(hasKey()){
+    const k=getKey();
+    inp.value=k;
+    s.className='key-status connected';
+    s.innerHTML=`<div class="badge-dot" style="background:#4caf50;width:8px;height:8px;border-radius:50%"></div>Connected — Key ending in ...${k.slice(-6)}`;
+  }else{
+    inp.value='';
+    s.className='key-status missing';
+    s.innerHTML=`<div class="badge-dot" style="background:#ef5350;width:8px;height:8px;border-radius:50%"></div>No API key configured`;
+  }
+  m.classList.add('show');
+}
+
+function closeSettings(){document.getElementById('settings-modal').classList.remove('show');}
+
+function saveSettingsKey(){
+  const k=document.getElementById('settings-key').value.trim();
+  if(!k.startsWith('sk-')){showToast('Key should start with sk-');return;}
+  setKey(k);closeSettings();showToast('API Key Updated ✓');
+}
+
+function removeKey(){
+  if(!confirm('Remove API key? You will need to re-enter it to use AI analysis.'))return;
+  localStorage.removeItem("ips-ci-key");updateGear();closeSettings();showToast('API Key Removed');
+}
+
+function showErr(msg){const e=document.getElementById('err-banner');document.getElementById('err-msg').innerHTML=msg;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),8000);}
+function hideErr(){document.getElementById('err-banner').classList.remove('show');}
+
+// ═══ STORAGE ═══
 function ld(){try{const d=localStorage.getItem("ips-ci");inv=d?JSON.parse(d):[];}catch(e){inv=[];}}
 function sv(){try{localStorage.setItem("ips-ci",JSON.stringify(inv));}catch(e){}}
 
+// ═══ TABS ═══
 function switchTab(t){document.querySelectorAll('.main-tab').forEach(e=>e.classList.toggle('active',e.dataset.tab===t));document.querySelectorAll('.tab-content').forEach(e=>e.classList.toggle('active',e.id==='tab-'+t));if(t==='inventory')rInv();if(t==='summary')rSum();}
 
+// ═══ TOTE GAUGE ═══
 function tH(p,c,lg){
   const h=lg?170:68,fH=Math.max(0,(p/100)*(h-10)),cH=lg?[20,40,60,80]:[33,66],cV=lg?[25,50,75]:[50];
   let s=`<div class="tote ${lg?'tote-lg':'tote-sm'}"><div class="tote-cage">`;
@@ -218,17 +386,25 @@ function tH(p,c,lg){
   s+=`</div>`;if(!lg)s+=`<div class="tote-pct-sm">${Math.round(p)}%</div>`;return s;
 }
 
-function handleImage(inp){const f=inp.files&&inp.files[0];if(!f)return;anl=null;itp=f.type||"image/jpeg";const r=new FileReader();r.onload=function(e){ib64=e.target.result.split(',')[1];document.getElementById('prev').src=e.target.result;document.getElementById('no-img').classList.add('hidden');document.getElementById('has-img').classList.remove('hidden');document.getElementById('abtn').classList.remove('hidden');document.getElementById('re-row').classList.add('hidden');document.getElementById('ai-card').classList.add('hidden');};r.readAsDataURL(f);}
-function clearScan(){ib64=null;anl=null;document.getElementById('fi').value='';document.getElementById('no-img').classList.remove('hidden');document.getElementById('has-img').classList.add('hidden');document.getElementById('ai-card').classList.add('hidden');document.getElementById('re-row').classList.add('hidden');}
+// ═══ IMAGE ═══
+function handleImage(inp){const f=inp.files&&inp.files[0];if(!f)return;anl=null;itp=f.type||"image/jpeg";const r=new FileReader();r.onload=function(e){ib64=e.target.result.split(',')[1];document.getElementById('prev').src=e.target.result;document.getElementById('no-img').classList.add('hidden');document.getElementById('has-img').classList.remove('hidden');document.getElementById('abtn').classList.remove('hidden');document.getElementById('re-row').classList.add('hidden');document.getElementById('ai-card').classList.add('hidden');hideErr();};r.readAsDataURL(f);}
+function clearScan(){ib64=null;anl=null;document.getElementById('fi').value='';document.getElementById('no-img').classList.remove('hidden');document.getElementById('has-img').classList.add('hidden');document.getElementById('ai-card').classList.add('hidden');document.getElementById('re-row').classList.add('hidden');hideErr();}
 
+// ═══ AI ANALYSIS ═══
 async function runAI(){
   if(!ib64)return;
-  document.getElementById('ov').classList.add('show');document.getElementById('abtn').classList.add('hidden');
+  if(!hasKey()){showErr('No API key. Tap the <a href="#" onclick="openSettings();return false;">⚙ gear</a> to add one.');return;}
+  document.getElementById('ov').classList.add('show');document.getElementById('abtn').classList.add('hidden');hideErr();
   try{
-    const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-5-20250929",max_tokens:1000,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:itp,data:ib64}},{type:"text",text:`You are an oilfield chemical inventory assistant. Analyze this image of a chemical container (likely an IBC tote, drum, or bucket used in oil & gas operations).
+    const resp=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","x-api-key":getKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      body:JSON.stringify({model:"claude-sonnet-4-5-20250929",max_tokens:1000,messages:[{role:"user",content:[
+        {type:"image",source:{type:"base64",media_type:itp,data:ib64}},
+        {type:"text",text:`You are an oilfield chemical inventory assistant. Analyze this image of a chemical container (likely an IBC tote, drum, or bucket used in oil & gas operations).
 
-Estimate:
-1. The fluid fill level as a percentage (0-100%). Look for the visible fluid line through translucent container walls, color changes, condensation lines, or other visual indicators.
+This measurement will be used for customer billing so accuracy is critical. Estimate:
+1. The fluid fill level as a percentage (0-100%). Look carefully for the visible fluid line through translucent container walls, color changes, condensation lines, weight indicators, or other visual indicators. If the tote walls are opaque, note this.
 2. Your confidence in the estimate (high, medium, low).
 3. The apparent color/opacity of the fluid if visible.
 4. The container type if identifiable (IBC tote, drum, bucket, etc.) and capacity.
@@ -237,25 +413,37 @@ Estimate:
 If you cannot clearly determine the fill level, give your best estimate and set confidence to "low".
 
 Respond ONLY with valid JSON. No markdown, no backticks:
-{"fill_percent":75,"confidence":"medium","fluid_color":"amber/clear","container_type":"275 gal IBC tote","product_label":null,"notes":"Fluid line visible approximately 3/4 up the container"}`}]}]})});
+{"fill_percent":75,"confidence":"medium","fluid_color":"amber/clear","container_type":"275 gal IBC tote","product_label":null,"notes":"Fluid line visible approximately 3/4 up the container"}`}
+      ]}]})
+    });
+    if(!resp.ok){
+      const err=await resp.json().catch(()=>({}));
+      if(resp.status===401)showErr('Invalid API key. Tap <a href="#" onclick="openSettings();return false;">⚙ gear</a> to update.');
+      else if(resp.status===429)showErr('Rate limited. Wait a moment and try again.');
+      else if(resp.status===400)showErr('Bad request: '+(err.error?.message||'Check image format.'));
+      else showErr('API error ('+resp.status+'): '+(err.error?.message||'Unknown error'));
+      document.getElementById('ov').classList.remove('show');document.getElementById('abtn').classList.remove('hidden');return;
+    }
     const data=await resp.json();const txt=(data.content||[]).map(b=>b.type==='text'?b.text:'').join('');
     anl=JSON.parse(txt.replace(/```json|```/g,'').trim());
     document.getElementById('fs').value=anl.fill_percent;uFill(anl.fill_percent);
     if(anl.container_type){const t=anl.container_type.toLowerCase(),s=document.getElementById('cts');if(t.includes('275'))s.value='275';else if(t.includes('330'))s.value='330';else if(t.includes('drum')||t.includes('55'))s.value='55';else if(t.includes('bucket')||t.includes('5 gal'))s.value='5';oCT();}
     if(anl.product_label){const lb=anl.product_label.toLowerCase(),s=document.getElementById('cs');for(let i=0;i<s.options.length;i++){if(lb.includes(s.options[i].value.toLowerCase())){s.value=s.options[i].value;oCC();break;}}}
     showAI();
-  }catch(e){console.error(e);alert('Analysis failed. Check connection.');}
+  }catch(e){console.error(e);showErr('Connection failed. Check internet and try again.');}
   document.getElementById('ov').classList.remove('show');document.getElementById('re-row').classList.remove('hidden');
 }
 
 function showAI(){if(!anl)return;document.getElementById('ai-card').classList.remove('hidden');const c=anl.confidence||'low';document.getElementById('cbadge').innerHTML=`<span class="badge badge-${c}"><span class="badge-dot"></span>${c}</span>`;const col=CC[document.getElementById('cs').value]||'#4fc3f7';document.getElementById('ai-gauge').innerHTML=tH(anl.fill_percent,col,true);let d='';if(anl.container_type)d+=`<div><strong>Detected:</strong> ${anl.container_type}</div>`;if(anl.fluid_color)d+=`<div><strong>Fluid:</strong> ${anl.fluid_color}</div>`;if(anl.product_label)d+=`<div><strong>Label:</strong> ${anl.product_label}</div>`;if(anl.notes)d+=`<div style="margin-top:8px;font-size:12px;color:#667">${anl.notes}</div>`;document.getElementById('ai-det').innerHTML=d;}
 
+// ═══ FILL / VOLUME ═══
 function gGal(){const v=document.getElementById('cts').value;return v==='custom'?(parseFloat(document.getElementById('cg').value)||0):parseFloat(v);}
 function uFill(v){v=parseInt(v);document.getElementById('pl').textContent=v;document.getElementById('sp').textContent=v+'%';const fH=Math.max(0,(v/100)*58),col=CC[document.getElementById('cs').value]||'#4fc3f7',fl=document.getElementById('sf');fl.style.height=fH+'px';fl.style.background=`linear-gradient(180deg,${col}cc,${col})`;fl.style.boxShadow=`0 -2px 10px ${col}44`;uVol();}
 function uVol(){const g=gGal(),p=parseInt(document.getElementById('fs').value),v=Math.round((p/100)*g*10)/10,d=document.getElementById('vd');if(g>0){d.classList.remove('hidden');document.getElementById('ev').textContent=v;document.getElementById('cv').textContent=g;}else d.classList.add('hidden');}
 function oCC(){document.getElementById('ccg').classList.toggle('hidden',document.getElementById('cs').value!=='Other');uFill(document.getElementById('fs').value);if(anl)showAI();}
 function oCT(){document.getElementById('cgg').classList.toggle('hidden',document.getElementById('cts').value!=='custom');uVol();}
 
+// ═══ ADD / EDIT ═══
 function addItem(){
   const cv=document.getElementById('cs').value,cn=cv==='Other'?(document.getElementById('cc').value||'Other'):cv;
   const cts=document.getElementById('cts'),cl=cts.options[cts.selectedIndex].text,g=gGal(),p=parseInt(document.getElementById('fs').value);
@@ -274,6 +462,7 @@ function editItem(id){
 function cancelEdit(){resetForm();}
 function deleteItem(id){inv=inv.filter(x=>x.id!==id);sv();uBadge();rInv();}
 
+// ═══ INVENTORY ═══
 function rInv(){
   const fv=document.getElementById('fsel').value,list=fv==='All'?inv:inv.filter(x=>x.chemical===fv),el=document.getElementById('ilist');
   const uq=[...new Set(inv.map(x=>x.chemical))],fs=document.getElementById('fsel'),pv=fs.value;
@@ -288,6 +477,7 @@ function rInv(){
   }).join('');
 }
 
+// ═══ SUMMARY ═══
 function rSum(){
   const el=document.getElementById('sbody'),tg=inv.reduce((s,i)=>s+i.estimatedVolume,0),tc=inv.reduce((s,i)=>s+i.containerGallons,0);
   const grp={};inv.forEach(i=>{if(!grp[i.chemical])grp[i.chemical]={n:0,v:0,c:0,f:0};grp[i.chemical].n++;grp[i.chemical].v+=i.estimatedVolume;grp[i.chemical].c+=i.containerGallons;grp[i.chemical].f+=i.fillPercent;});
@@ -299,10 +489,12 @@ function rSum(){
   el.innerHTML=h;
 }
 
+// ═══ UTILS ═══
 function uBadge(){const b=document.getElementById('inv-badge');if(inv.length){b.textContent=inv.length;b.classList.remove('hidden');}else b.classList.add('hidden');}
 function showToast(m){const t=document.getElementById('toast');document.getElementById('tmsg').textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
 
-ld();uBadge();uFill(50);
+// ═══ INIT ═══
+ld();uBadge();uFill(50);checkSetup();
 </script>
 </body>
 </html>
