@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="IPS Chem Inv">
+<meta name="theme-color" content="#0d1b2a">
+<title>IPS Chemical Inventory</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#1b2838;color:#e0e0e0;min-height:100vh;-webkit-tap-highlight-color:transparent}
+::placeholder{color:#556}
+
+.app-header{background:linear-gradient(135deg,#0d1b2a,#1b2838);padding:8px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #2d4a6f}
+.hdr-icon{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#1565c0,#0d47a1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr-icon svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2}
+.app-title{flex:1}
+.app-title h1{font-size:11px;font-weight:600;letter-spacing:.3px;color:#e0e0e0}
+.app-title p{font-size:9px;opacity:.7}
+
+.main-tabs{display:flex;background:#0d1b2a;border-bottom:2px solid #2d4a6f;padding:0 2px}
+.main-tab{flex:1;padding:12px 4px;border:2px solid transparent;background:transparent;font-size:12px;font-weight:600;color:rgba(255,255,255,.4);cursor:pointer;position:relative;margin-bottom:-2px;border-radius:8px 8px 0 0;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
+.main-tab.active{background:#1b2838;color:#4fc3f7;border-color:#2d4a6f;border-bottom-color:#1b2838}
+.main-tab svg{width:14px;height:14px}
+.tab-badge{background:#4fc3f7;color:#0d1b2a;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:3px}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+.body{padding:12px;padding-bottom:60px}
+.card{background:#243447;border-radius:8px;padding:16px;margin-bottom:12px;box-shadow:0 2px 4px rgba(0,0,0,.3);border:1px solid #2d4a6f}
+.card.hl{border-color:#4fc3f7}
+.card-title{font-size:12px;font-weight:600;color:#4fc3f7;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #2d4a6f;padding-bottom:8px;display:flex;align-items:center;gap:6px}
+.card-title svg{width:14px;height:14px}
+
+.field-group{margin-bottom:12px}
+.field-label{display:block;font-size:10px;color:#888;text-transform:uppercase;margin-bottom:4px;letter-spacing:.5px}
+input[type="text"],input[type="number"],select{width:100%;padding:10px;border:1px solid #2d4a6f;border-radius:6px;font-size:16px;background:#1b2838;color:#e0e0e0;font-family:inherit;outline:none}
+input:focus,select:focus{border-color:#4fc3f7;box-shadow:0 0 0 1px rgba(79,195,247,.3)}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+
+.btn{border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}
+.btn:active{transform:scale(.97)}
+.btn svg{width:18px;height:18px}
+.btn-primary{width:100%;padding:14px;background:#1565c0;color:#fff;font-size:16px;border-radius:8px}
+.btn-green{width:100%;padding:14px;background:#2e7d32;color:#fff;font-size:16px;border-radius:8px}
+.btn-sec{padding:10px 16px;background:#2d4a6f;color:#e0e0e0;border-radius:6px}
+.btn-danger{padding:6px 10px;background:rgba(239,83,80,.15);border:1px solid rgba(239,83,80,.3);color:#ef5350;border-radius:6px}
+.btn-row{display:flex;gap:8px}
+.btn-row .btn{flex:1}
+
+.tote-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.tote{position:relative;border:2px solid #455a64;border-radius:4px;background:#0d1b2a;overflow:hidden}
+.tote-lg{width:120px;height:170px}
+.tote-sm{width:48px;height:68px}
+.tote-cage{position:absolute;inset:0;opacity:.12;pointer-events:none}
+.tote-cage div{position:absolute;background:#8899aa}
+.tote-cage .ch{left:0;right:0;height:1px}
+.tote-cage .cv{top:0;bottom:0;width:1px}
+.tote-fluid{position:absolute;bottom:3px;left:3px;right:3px;border-radius:2px;transition:height .6s ease}
+.tote-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.7);z-index:2}
+.tote-pct-sm{font-size:15px;font-weight:700;color:#e0e0e0;text-align:center}
+
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.badge-dot{width:5px;height:5px;border-radius:50%}
+.badge-high{background:rgba(76,175,80,.2);color:#4caf50;border:1px solid rgba(76,175,80,.3)}
+.badge-high .badge-dot{background:#4caf50}
+.badge-medium{background:rgba(255,167,38,.2);color:#ffa726;border:1px solid rgba(255,167,38,.3)}
+.badge-medium .badge-dot{background:#ffa726}
+.badge-low{background:rgba(239,83,80,.2);color:#ef5350;border:1px solid rgba(239,83,80,.3)}
+.badge-low .badge-dot{background:#ef5350}
+
+.fill-bar{width:100%;height:6px;border-radius:3px;background:#0d1b2a;overflow:hidden}
+.fill-bar-lg{height:10px;border-radius:5px}
+.fill-inner{height:100%;border-radius:inherit;transition:width .3s}
+
+input[type="range"]{width:100%;height:8px;border-radius:4px;-webkit-appearance:none;appearance:none;background:#0d1b2a;outline:none;cursor:pointer;border:none;padding:0}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#4fc3f7;cursor:pointer;box-shadow:0 2px 8px rgba(79,195,247,.4);border:2px solid #0d1b2a}
+input[type="range"]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#4fc3f7;cursor:pointer;box-shadow:0 2px 8px rgba(79,195,247,.4);border:2px solid #0d1b2a}
+.slider-row{display:flex;align-items:center;gap:14px}
+.slider-fill{flex:1}
+.slider-labels{display:flex;justify-content:space-between;font-size:10px;color:#556;margin-top:4px}
+
+.vol-display{text-align:center;margin-top:8px;font-size:24px;font-weight:800;color:#4fc3f7}
+.vol-cap{font-size:13px;color:#888;font-weight:400;margin-left:6px}
+
+.img-frame{position:relative;border-radius:8px;overflow:hidden;border:1px solid #2d4a6f;margin-bottom:12px;background:#000}
+.img-frame img{width:100%;max-height:300px;object-fit:contain;display:block}
+.img-overlay{position:absolute;inset:0;background:rgba(0,0,0,.75);display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.img-overlay.show{display:flex}
+.spinner{animation:spin 1s linear infinite}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+.analysis-row{display:flex;align-items:center;gap:16px}
+.analysis-detail{flex:1;font-size:13px;color:#888;line-height:1.6}
+.analysis-detail strong{color:#e0e0e0}
+
+.inv-item{display:flex;gap:10px;align-items:flex-start}
+.inv-info{flex:1;min-width:0}
+.inv-header{display:flex;justify-content:space-between;align-items:flex-start}
+.inv-name{font-size:15px;font-weight:700;line-height:1.1}
+.inv-sub{font-size:11px;color:#888;margin-top:2px}
+.inv-vol-row{display:flex;align-items:baseline;gap:8px;margin-top:6px;flex-wrap:wrap}
+.inv-vol{font-size:24px;font-weight:800;color:#4fc3f7}
+.inv-vol-cap{font-size:12px;color:#888}
+.inv-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:#556}
+.inv-notes{font-size:11px;color:#888;margin-top:4px;font-style:italic}
+.inv-actions{display:flex;gap:6px;flex-shrink:0}
+
+.alert-low{display:flex;align-items:center;gap:6px;margin-top:8px;padding:6px 10px;border-radius:6px;background:rgba(239,83,80,.1);border:1px solid rgba(239,83,80,.3);font-size:11px;color:#ef5350}
+.alert-low svg{width:14px;height:14px;flex-shrink:0}
+
+.summary-total{font-size:36px;font-weight:800;color:#4fc3f7;line-height:1}
+.summary-sub{font-size:13px;color:#888;margin-top:4px}
+.summary-pct{font-size:11px;color:#aaa;margin-top:4px}
+.summary-row{display:flex;justify-content:space-between;align-items:center}
+.summary-chem{display:flex;align-items:center;gap:8px}
+.summary-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.summary-chem-name{font-size:15px;font-weight:700;color:#e0e0e0}
+.summary-chem-vol{font-size:20px;font-weight:800;color:#4fc3f7}
+.summary-meta{display:flex;justify-content:space-between;font-size:11px;color:#888;margin-top:6px}
+
+.empty{text-align:center;padding:48px 20px;color:#556}
+.empty svg{width:48px;height:48px;opacity:.3}
+.empty h3{font-size:16px;color:#8899aa;margin-top:12px}
+.empty p{font-size:12px;color:#556;margin-top:4px}
+
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;z-index:100;transition:transform .3s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast-success{background:#2e7d32;color:#fff;box-shadow:0 4px 20px rgba(46,125,50,.5)}
+.toast svg{width:16px;height:16px}
+
+.filter-bar{display:flex;align-items:center;gap:8px}
+.filter-bar svg{width:16px;height:16px;stroke:#888;flex-shrink:0}
+.filter-bar select{padding:8px 30px 8px 10px;font-size:14px}
+
+.photo-hint{text-align:center;margin-top:8px;color:#556;font-size:12px}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="app-header">
+    <div class="hdr-icon"><svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="app-title"><h1>INTELLIGENT PETROLEUM SOLUTIONS LLC</h1><p>Chemical Inventory</p></div>
+  </div>
+  <div class="main-tabs">
+    <button class="main-tab active" data-tab="scan" onclick="switchTab('scan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan</button>
+    <button class="main-tab" data-tab="inventory" onclick="switchTab('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Inventory<span class="tab-badge hidden" id="inv-badge"></span></button>
+    <button class="main-tab" data-tab="summary" onclick="switchTab('summary')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Summary</button>
+  </div>
+
+  <!-- SCAN TAB -->
+  <div class="tab-content active" id="tab-scan"><div class="body">
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Capture Tote Image</div>
+      <input type="file" id="fi" accept="image/*" capture="environment" style="display:none" onchange="handleImage(this)">
+      <div id="no-img"><button class="btn btn-primary" onclick="document.getElementById('fi').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Take Photo</button><div class="photo-hint">or tap to select from gallery</div></div>
+      <div id="has-img" class="hidden">
+        <div class="img-frame"><img id="prev" src="" alt=""><div class="img-overlay" id="ov"><svg class="spinner" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg><span style="font-size:14px;font-weight:700;color:#4fc3f7;letter-spacing:1px;text-transform:uppercase">Analyzing...</span></div></div>
+        <div class="btn-row"><button class="btn btn-primary" id="abtn" onclick="runAI()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Analyze Fill Level</button><button class="btn btn-sec" onclick="clearScan()" style="flex:0">✕</button></div>
+        <div class="btn-row hidden" id="re-row" style="margin-top:8px"><button class="btn btn-sec" onclick="runAI()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Re-Analyze</button></div>
+      </div>
+    </div>
+    <div class="card hl hidden" id="ai-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div class="card-title" style="margin:0;border:none;padding:0">AI Analysis</div><span id="cbadge"></span></div>
+      <div class="analysis-row"><div id="ai-gauge"></div><div class="analysis-detail" id="ai-det"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Fill Level — <span id="pl">50</span>%</div>
+      <div class="slider-row">
+        <div class="tote-wrap"><div class="tote tote-sm"><div class="tote-cage"><div class="ch" style="top:33%"></div><div class="ch" style="top:66%"></div><div class="cv" style="left:50%"></div></div><div class="tote-fluid" id="sf" style="height:28px;background:#4fc3f7"></div></div><div class="tote-pct-sm" id="sp">50%</div></div>
+        <div class="slider-fill"><input type="range" id="fs" min="0" max="100" value="50" oninput="uFill(this.value)"><div class="slider-labels"><span>Empty</span><span>Full</span></div></div>
+      </div>
+      <div class="vol-display hidden" id="vd">≈ <span id="ev">0</span> gal<span class="vol-cap">of <span id="cv">0</span> gal</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Chemical Details</div>
+      <div class="field-group"><label class="field-label">Chemical Type</label><select id="cs" onchange="oCC()"><option>Friction Reducer</option><option>Clay Stabilizer</option><option>Biocide</option><option>Scale Inhibitor</option><option>Corrosion Inhibitor</option><option>Surfactant</option><option>Pipe-on-Pipe Lube</option><option>HCl Acid</option><option>Linear Gel</option><option>Crosslinker</option><option>Breaker</option><option>Iron Control</option><option>H2S Scavenger</option><option>Defoamer</option><option>Emulsion Breaker</option><option>KCl / Salt</option><option>Other</option></select></div>
+      <div class="field-group hidden" id="ccg"><label class="field-label">Chemical Name</label><input type="text" id="cc" placeholder="Enter chemical name"></div>
+      <div class="field-group"><label class="field-label">Container Size</label><select id="cts" onchange="oCT()"><option value="275">275 gal IBC Tote</option><option value="330">330 gal IBC Tote</option><option value="55">55 gal Drum</option><option value="5">5 gal Bucket</option><option value="custom">Custom</option></select></div>
+      <div class="field-group hidden" id="cgg"><label class="field-label">Custom Capacity (gal)</label><input type="number" id="cg" placeholder="Total gallons" oninput="uVol()"></div>
+      <div class="field-group"><label class="field-label">Location / Well</label><input type="text" id="li" placeholder="e.g. Justin SWD #1"></div>
+      <div class="field-group"><label class="field-label">Notes</label><input type="text" id="ni" placeholder="Optional notes"></div>
+    </div>
+    <button class="btn btn-green" id="addbtn" onclick="addItem()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add to Inventory</button>
+    <button class="btn btn-sec hidden" id="canbtn" style="width:100%;margin-top:8px" onclick="cancelEdit()">Cancel Edit</button>
+  </div></div>
+
+  <!-- INVENTORY TAB -->
+  <div class="tab-content" id="tab-inventory"><div class="body">
+    <div class="card filter-bar" style="padding:10px 12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><select id="fsel" onchange="rInv()"></select></div>
+    <div id="ilist"></div>
+  </div></div>
+
+  <!-- SUMMARY TAB -->
+  <div class="tab-content" id="tab-summary"><div class="body" id="sbody"></div></div>
+</div>
+<div class="toast toast-success" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span id="tmsg">Added</span></div>
+
+<script>
+const CC={"Friction Reducer":"#ff6b35","Clay Stabilizer":"#4db6ac","Biocide":"#ef5350","Scale Inhibitor":"#42a5f5","Corrosion Inhibitor":"#ba68c8","Surfactant":"#66bb6a","Pipe-on-Pipe Lube":"#ffa726","HCl Acid":"#ef5350","Linear Gel":"#4fc3f7","Crosslinker":"#455a64","Breaker":"#8d6e63","Iron Control":"#b5838d","H2S Scavenger":"#78909c","Defoamer":"#ce93d8","Emulsion Breaker":"#90caf9","KCl / Salt":"#80cbc4","Other":"#90a4ae"};
+let inv=[],eid=null,anl=null,ib64=null,itp="image/jpeg";
+
+function ld(){try{const d=localStorage.getItem("ips-ci");inv=d?JSON.parse(d):[];}catch(e){inv=[];}}
+function sv(){try{localStorage.setItem("ips-ci",JSON.stringify(inv));}catch(e){}}
+
+function switchTab(t){document.querySelectorAll('.main-tab').forEach(e=>e.classList.toggle('active',e.dataset.tab===t));document.querySelectorAll('.tab-content').forEach(e=>e.classList.toggle('active',e.id==='tab-'+t));if(t==='inventory')rInv();if(t==='summary')rSum();}
+
+function tH(p,c,lg){
+  const h=lg?170:68,fH=Math.max(0,(p/100)*(h-10)),cH=lg?[20,40,60,80]:[33,66],cV=lg?[25,50,75]:[50];
+  let s=`<div class="tote ${lg?'tote-lg':'tote-sm'}"><div class="tote-cage">`;
+  cH.forEach(v=>{s+=`<div class="ch" style="top:${v}%"></div>`;});
+  cV.forEach(v=>{s+=`<div class="cv" style="left:${v}%"></div>`;});
+  s+=`</div><div class="tote-fluid" style="height:${fH}px;background:linear-gradient(180deg,${c}cc,${c});box-shadow:0 -2px 10px ${c}44"></div>`;
+  if(lg)s+=`<div class="tote-pct">${Math.round(p)}%</div>`;
+  s+=`</div>`;if(!lg)s+=`<div class="tote-pct-sm">${Math.round(p)}%</div>`;return s;
+}
+
+function handleImage(inp){const f=inp.files&&inp.files[0];if(!f)return;anl=null;itp=f.type||"image/jpeg";const r=new FileReader();r.onload=function(e){ib64=e.target.result.split(',')[1];document.getElementById('prev').src=e.target.result;document.getElementById('no-img').classList.add('hidden');document.getElementById('has-img').classList.remove('hidden');document.getElementById('abtn').classList.remove('hidden');document.getElementById('re-row').classList.add('hidden');document.getElementById('ai-card').classList.add('hidden');};r.readAsDataURL(f);}
+function clearScan(){ib64=null;anl=null;document.getElementById('fi').value='';document.getElementById('no-img').classList.remove('hidden');document.getElementById('has-img').classList.add('hidden');document.getElementById('ai-card').classList.add('hidden');document.getElementById('re-row').classList.add('hidden');}
+
+async function runAI(){
+  if(!ib64)return;
+  document.getElementById('ov').classList.add('show');document.getElementById('abtn').classList.add('hidden');
+  try{
+    const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-5-20250929",max_tokens:1000,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:itp,data:ib64}},{type:"text",text:`You are an oilfield chemical inventory assistant. Analyze this image of a chemical container (likely an IBC tote, drum, or bucket used in oil & gas operations).
+
+Estimate:
+1. The fluid fill level as a percentage (0-100%). Look for the visible fluid line through translucent container walls, color changes, condensation lines, or other visual indicators.
+2. Your confidence in the estimate (high, medium, low).
+3. The apparent color/opacity of the fluid if visible.
+4. The container type if identifiable (IBC tote, drum, bucket, etc.) and capacity.
+5. Any visible product label or chemical name on the container.
+
+If you cannot clearly determine the fill level, give your best estimate and set confidence to "low".
+
+Respond ONLY with valid JSON. No markdown, no backticks:
+{"fill_percent":75,"confidence":"medium","fluid_color":"amber/clear","container_type":"275 gal IBC tote","product_label":null,"notes":"Fluid line visible approximately 3/4 up the container"}`}]}]})});
+    const data=await resp.json();const txt=(data.content||[]).map(b=>b.type==='text'?b.text:'').join('');
+    anl=JSON.parse(txt.replace(/```json|```/g,'').trim());
+    document.getElementById('fs').value=anl.fill_percent;uFill(anl.fill_percent);
+    if(anl.container_type){const t=anl.container_type.toLowerCase(),s=document.getElementById('cts');if(t.includes('275'))s.value='275';else if(t.includes('330'))s.value='330';else if(t.includes('drum')||t.includes('55'))s.value='55';else if(t.includes('bucket')||t.includes('5 gal'))s.value='5';oCT();}
+    if(anl.product_label){const lb=anl.product_label.toLowerCase(),s=document.getElementById('cs');for(let i=0;i<s.options.length;i++){if(lb.includes(s.options[i].value.toLowerCase())){s.value=s.options[i].value;oCC();break;}}}
+    showAI();
+  }catch(e){console.error(e);alert('Analysis failed. Check connection.');}
+  document.getElementById('ov').classList.remove('show');document.getElementById('re-row').classList.remove('hidden');
+}
+
+function showAI(){if(!anl)return;document.getElementById('ai-card').classList.remove('hidden');const c=anl.confidence||'low';document.getElementById('cbadge').innerHTML=`<span class="badge badge-${c}"><span class="badge-dot"></span>${c}</span>`;const col=CC[document.getElementById('cs').value]||'#4fc3f7';document.getElementById('ai-gauge').innerHTML=tH(anl.fill_percent,col,true);let d='';if(anl.container_type)d+=`<div><strong>Detected:</strong> ${anl.container_type}</div>`;if(anl.fluid_color)d+=`<div><strong>Fluid:</strong> ${anl.fluid_color}</div>`;if(anl.product_label)d+=`<div><strong>Label:</strong> ${anl.product_label}</div>`;if(anl.notes)d+=`<div style="margin-top:8px;font-size:12px;color:#667">${anl.notes}</div>`;document.getElementById('ai-det').innerHTML=d;}
+
+function gGal(){const v=document.getElementById('cts').value;return v==='custom'?(parseFloat(document.getElementById('cg').value)||0):parseFloat(v);}
+function uFill(v){v=parseInt(v);document.getElementById('pl').textContent=v;document.getElementById('sp').textContent=v+'%';const fH=Math.max(0,(v/100)*58),col=CC[document.getElementById('cs').value]||'#4fc3f7',fl=document.getElementById('sf');fl.style.height=fH+'px';fl.style.background=`linear-gradient(180deg,${col}cc,${col})`;fl.style.boxShadow=`0 -2px 10px ${col}44`;uVol();}
+function uVol(){const g=gGal(),p=parseInt(document.getElementById('fs').value),v=Math.round((p/100)*g*10)/10,d=document.getElementById('vd');if(g>0){d.classList.remove('hidden');document.getElementById('ev').textContent=v;document.getElementById('cv').textContent=g;}else d.classList.add('hidden');}
+function oCC(){document.getElementById('ccg').classList.toggle('hidden',document.getElementById('cs').value!=='Other');uFill(document.getElementById('fs').value);if(anl)showAI();}
+function oCT(){document.getElementById('cgg').classList.toggle('hidden',document.getElementById('cts').value!=='custom');uVol();}
+
+function addItem(){
+  const cv=document.getElementById('cs').value,cn=cv==='Other'?(document.getElementById('cc').value||'Other'):cv;
+  const cts=document.getElementById('cts'),cl=cts.options[cts.selectedIndex].text,g=gGal(),p=parseInt(document.getElementById('fs').value);
+  const it={id:eid||Date.now().toString(),chemical:cn,containerLabel:cl,containerGallons:g,fillPercent:p,estimatedVolume:Math.round((p/100)*g*10)/10,location:document.getElementById('li').value.trim(),notes:document.getElementById('ni').value.trim(),timestamp:new Date().toISOString(),aiConfidence:anl?(anl.confidence||'manual'):'manual',fluidColor:anl?(anl.fluid_color||''):''};
+  if(eid){const i=inv.findIndex(x=>x.id===eid);if(i>=0)inv[i]=it;eid=null;}else inv.unshift(it);
+  sv();uBadge();showToast(eid?'Item Updated':'Added to Inventory');resetForm();
+}
+function resetForm(){clearScan();eid=null;document.getElementById('cs').value='Friction Reducer';oCC();document.getElementById('cts').value='275';oCT();document.getElementById('li').value='';document.getElementById('ni').value='';document.getElementById('fs').value=50;uFill(50);document.getElementById('addbtn').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add to Inventory';document.getElementById('canbtn').classList.add('hidden');}
+function editItem(id){
+  const it=inv.find(x=>x.id===id);if(!it)return;eid=id;
+  const cs=document.getElementById('cs'),has=[...cs.options].some(o=>o.value===it.chemical);cs.value=has?it.chemical:'Other';oCC();if(!has)document.getElementById('cc').value=it.chemical;
+  const cts=document.getElementById('cts'),m=[...cts.options].find(o=>parseFloat(o.value)===it.containerGallons);if(m)cts.value=m.value;else{cts.value='custom';document.getElementById('cg').value=it.containerGallons;}oCT();
+  document.getElementById('fs').value=it.fillPercent;uFill(it.fillPercent);document.getElementById('li').value=it.location;document.getElementById('ni').value=it.notes;
+  document.getElementById('addbtn').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>Update Item';document.getElementById('canbtn').classList.remove('hidden');switchTab('scan');window.scrollTo(0,0);
+}
+function cancelEdit(){resetForm();}
+function deleteItem(id){inv=inv.filter(x=>x.id!==id);sv();uBadge();rInv();}
+
+function rInv(){
+  const fv=document.getElementById('fsel').value,list=fv==='All'?inv:inv.filter(x=>x.chemical===fv),el=document.getElementById('ilist');
+  const uq=[...new Set(inv.map(x=>x.chemical))],fs=document.getElementById('fsel'),pv=fs.value;
+  fs.innerHTML=`<option value="All">All Chemicals (${inv.length})</option>`+uq.map(c=>`<option value="${c}">${c} (${inv.filter(x=>x.chemical===c).length})</option>`).join('');
+  if([...fs.options].some(o=>o.value===pv))fs.value=pv;
+  if(!list.length){el.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><h3>No Items Yet</h3><p>Scan a tote to start building inventory</p></div>`;return;}
+  el.innerHTML=list.map(it=>{
+    const col=CC[it.chemical]||'#90a4ae',ts=new Date(it.timestamp),tm=ts.toLocaleDateString()+' '+ts.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    const bg=it.aiConfidence&&it.aiConfidence!=='manual'?`<span class="badge badge-${it.aiConfidence}"><span class="badge-dot"></span>${it.aiConfidence}</span>`:'';
+    const lw=it.fillPercent<25?`<div class="alert-low"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Low — consider reorder</div>`:'';
+    return `<div class="card" style="border-left:4px solid ${col}"><div class="inv-item"><div class="tote-wrap">${tH(it.fillPercent,col,false)}</div><div class="inv-info"><div class="inv-header"><div><div class="inv-name" style="color:${col}">${it.chemical}</div><div class="inv-sub">${it.containerLabel}</div></div><div class="inv-actions"><button class="btn btn-sec" style="padding:6px 10px" onclick="editItem('${it.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg></button><button class="btn btn-danger" onclick="deleteItem('${it.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div></div><div class="inv-vol-row"><span class="inv-vol">${it.estimatedVolume} gal</span><span class="inv-vol-cap">/ ${it.containerGallons} gal</span>${bg}</div><div class="fill-bar" style="margin-top:8px"><div class="fill-inner" style="width:${it.fillPercent}%;background:${col}"></div></div><div class="inv-meta"><span>${it.location||'No location'}</span><span>${tm}</span></div>${it.notes?`<div class="inv-notes">${it.notes}</div>`:''}${lw}</div></div></div>`;
+  }).join('');
+}
+
+function rSum(){
+  const el=document.getElementById('sbody'),tg=inv.reduce((s,i)=>s+i.estimatedVolume,0),tc=inv.reduce((s,i)=>s+i.containerGallons,0);
+  const grp={};inv.forEach(i=>{if(!grp[i.chemical])grp[i.chemical]={n:0,v:0,c:0,f:0};grp[i.chemical].n++;grp[i.chemical].v+=i.estimatedVolume;grp[i.chemical].c+=i.containerGallons;grp[i.chemical].f+=i.fillPercent;});
+  const sorted=Object.entries(grp).sort((a,b)=>b[1].v-a[1].v);
+  let h=`<div class="card hl" style="text-align:center"><div class="card-title" style="justify-content:center">Total Chemical Inventory</div><div class="summary-total">${Math.round(tg).toLocaleString()} gal</div><div class="summary-sub">${inv.length} container${inv.length!==1?'s':''} — ${tc.toLocaleString()} gal capacity</div><div class="fill-bar fill-bar-lg" style="margin-top:12px"><div class="fill-inner" style="width:${tc>0?(tg/tc*100):0}%;background:#4fc3f7"></div></div><div class="summary-pct">${tc>0?Math.round(tg/tc*100):0}% overall fill</div></div>`;
+  if(!sorted.length)h+=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><h3>No Data Yet</h3></div>`;
+  else sorted.forEach(([ch,d])=>{const col=CC[ch]||'#90a4ae',avg=Math.round(d.f/d.n),lw=avg<25?`<div class="alert-low"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Low inventory — consider reorder</div>`:'';h+=`<div class="card"><div class="summary-row"><div class="summary-chem"><div class="summary-dot" style="background:${col}"></div><span class="summary-chem-name">${ch}</span></div><span class="summary-chem-vol">${Math.round(d.v)} gal</span></div><div class="summary-meta"><span>${d.n} container${d.n!==1?'s':''}</span><span>${d.c} gal capacity</span><span>Avg: ${avg}%</span></div><div class="fill-bar" style="margin-top:8px"><div class="fill-inner" style="width:${avg}%;background:${col}"></div></div>${lw}</div>`;});
+  if(inv.length)h+=`<div style="text-align:center;margin-top:16px"><button class="btn btn-sec" style="display:inline-flex" onclick="if(confirm('Clear all inventory?')){inv=[];sv();uBadge();rSum();}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Clear All</button></div>`;
+  el.innerHTML=h;
+}
+
+function uBadge(){const b=document.getElementById('inv-badge');if(inv.length){b.textContent=inv.length;b.classList.remove('hidden');}else b.classList.add('hidden');}
+function showToast(m){const t=document.getElementById('toast');document.getElementById('tmsg').textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+
+ld();uBadge();uFill(50);
+</script>
+</body>
+</html>
