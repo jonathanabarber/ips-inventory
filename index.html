@@ -2,499 +2,683 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="IPS Chem Inv">
-<meta name="theme-color" content="#0d1b2a">
-<title>IPS Chemical Inventory</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Fidel's Marker Calculator</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#1b2838;color:#e0e0e0;min-height:100vh;-webkit-tap-highlight-color:transparent}
-::placeholder{color:#556}
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow:wght@400;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #080f18;
+    color: #ddeeff;
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px 16px 48px;
+  }
+  .card {
+    width: 100%;
+    max-width: 420px;
+    background: #0c1824;
+    border: 1px solid #1a2e42;
+    border-radius: 14px;
+    overflow: hidden;
+  }
 
-.app-header{background:linear-gradient(135deg,#0d1b2a,#1b2838);padding:8px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #2d4a6f}
-.hdr-icon{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#1565c0,#0d47a1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.hdr-icon svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2}
-.app-title{flex:1}
-.app-title h1{font-size:11px;font-weight:600;letter-spacing:.3px;color:#e0e0e0}
-.app-title p{font-size:9px;opacity:.7}
-.hdr-actions{display:flex;gap:6px}
-.hdr-btn{width:36px;height:36px;border-radius:50%;background:#1b2838;border:2px solid #455a64;color:#455a64;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s}
-.hdr-btn svg{width:18px;height:18px}
-.hdr-btn.active{border-color:#66bb6a;color:#66bb6a;background:rgba(46,125,50,.2)}
-.hdr-btn.needs-key{border-color:#ef5350;color:#ef5350;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+  /* APP HEADER */
+  .app-header {
+    background: #080f18;
+    padding: 20px 20px 0;
+    text-align: center;
+  }
+  .app-title {
+    font-size: 18px;
+    font-family: 'Barlow', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #e8f4ff;
+    text-transform: uppercase;
+  }
+  .app-title span { color: #2d7dd2; }
+  .app-sub {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: #3a5a78;
+    letter-spacing: 0.14em;
+    margin-top: 3px;
+    text-transform: uppercase;
+  }
 
-.main-tabs{display:flex;background:#0d1b2a;border-bottom:2px solid #2d4a6f;padding:0 2px}
-.main-tab{flex:1;padding:12px 4px;border:2px solid transparent;background:transparent;font-size:12px;font-weight:600;color:rgba(255,255,255,.4);cursor:pointer;position:relative;margin-bottom:-2px;border-radius:8px 8px 0 0;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
-.main-tab.active{background:#1b2838;color:#4fc3f7;border-color:#2d4a6f;border-bottom-color:#1b2838}
-.main-tab svg{width:14px;height:14px}
-.tab-badge{background:#4fc3f7;color:#0d1b2a;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:3px}
-.tab-content{display:none}
-.tab-content.active{display:block}
+  /* PILL TABS */
+  .tab-bar {
+    display: flex;
+    padding: 14px 16px 0;
+    gap: 8px;
+    background: #080f18;
+    border-bottom: 1px solid #1a2e42;
+    margin-top: 14px;
+    position: relative;
+    z-index: 1;
+  }
+  .tab-pill {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    color: #3a5a78;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab-pill.active {
+    color: #e8f4ff;
+    border-bottom: 2px solid #2d7dd2;
+    background: #0c1824;
+  }
 
-.body{padding:12px;padding-bottom:60px}
-.card{background:#243447;border-radius:8px;padding:16px;margin-bottom:12px;box-shadow:0 2px 4px rgba(0,0,0,.3);border:1px solid #2d4a6f}
-.card.hl{border-color:#4fc3f7}
-.card-title{font-size:12px;font-weight:600;color:#4fc3f7;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #2d4a6f;padding-bottom:8px;display:flex;align-items:center;gap:6px}
-.card-title svg{width:14px;height:14px}
+  /* TAB PANELS */
+  .tab-panel { display: none; padding: 24px 24px 32px; }
+  .tab-panel.active { display: block; }
 
-.field-group{margin-bottom:12px}
-.field-label{display:block;font-size:10px;color:#888;text-transform:uppercase;margin-bottom:4px;letter-spacing:.5px}
-.field-hint{font-size:11px;color:#556;margin-top:4px}
-input[type="text"],input[type="number"],input[type="password"],select{width:100%;padding:10px;border:1px solid #2d4a6f;border-radius:6px;font-size:16px;background:#1b2838;color:#e0e0e0;font-family:inherit;outline:none}
-input:focus,select:focus{border-color:#4fc3f7;box-shadow:0 0 0 1px rgba(79,195,247,.3)}
-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+  /* FIELDS */
+  .divider { display: flex; align-items: center; gap: 10px; margin: 20px 0 16px; }
+  .divider:first-child { margin-top: 0; }
+  .divider-line { flex: 1; height: 1px; background: #1a2e42; }
+  .divider-label {
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    color: #7a9ab8;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+  }
+  .field { margin-bottom: 14px; }
+  .field-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
+  label { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #b8cfe8; font-family: 'DM Mono', monospace; }
+  .unit { font-size: 12px; color: #7a9ab8; font-family: 'DM Mono', monospace; }
+  input {
+    width: 100%;
+    background: #0d1b2a;
+    border: 1px solid #1e3048;
+    border-radius: 7px;
+    color: #e8f4ff;
+    font-size: 22px;
+    font-family: 'DM Mono', monospace;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  input:focus { border-color: #2d7dd2; }
+  input::placeholder { color: #2a3d52; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
 
-.btn{border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}
-.btn:active{transform:scale(.97)}
-.btn svg{width:18px;height:18px}
-.btn-primary{width:100%;padding:14px;background:#1565c0;color:#fff;font-size:16px;border-radius:8px}
-.btn-green{width:100%;padding:14px;background:#2e7d32;color:#fff;font-size:16px;border-radius:8px}
-.btn-sec{padding:10px 16px;background:#2d4a6f;color:#e0e0e0;border-radius:6px}
-.btn-danger{padding:6px 10px;background:rgba(239,83,80,.15);border:1px solid rgba(239,83,80,.3);color:#ef5350;border-radius:6px}
-.btn-row{display:flex;gap:8px}
-.btn-row .btn{flex:1}
+  /* BUTTON */
+  .calc-btn {
+    width: 100%;
+    margin-top: 22px;
+    padding: 16px;
+    background: #2d7dd2;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .calc-btn:active { background: #1f5fa8; transform: scale(0.98); }
 
-/* Setup / Settings Modal */
-.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:300;align-items:center;justify-content:center;padding:20px}
-.modal.show{display:flex}
-.modal-box{background:#243447;border-radius:12px;padding:20px;width:100%;max-width:360px;border:1px solid #2d4a6f}
-.modal-title{font-size:18px;font-weight:600;color:#4fc3f7;margin-bottom:4px;text-align:center}
-.modal-sub{font-size:13px;color:#888;margin-bottom:16px;text-align:center}
-.modal-btns{display:flex;gap:10px;margin-top:16px}
-.modal-btns .btn{flex:1;padding:12px}
-.key-status{display:flex;align-items:center;gap:8px;padding:10px;border-radius:6px;margin-bottom:12px;font-size:13px}
-.key-status.connected{background:rgba(76,175,80,.15);border:1px solid rgba(76,175,80,.3);color:#4caf50}
-.key-status.missing{background:rgba(239,83,80,.15);border:1px solid rgba(239,83,80,.3);color:#ef5350}
-.key-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  /* RESULT */
+  .result-box {
+    margin-top: 22px;
+    background: #071220;
+    border: 1px solid #1e3048;
+    border-radius: 10px;
+    padding: 20px 18px;
+    display: none;
+  }
+  .result-box.show { display: block; }
+  .eta-label { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: #7a9ab8; font-family: 'DM Mono', monospace; margin-bottom: 6px; }
+  .eta-time { font-size: 48px; font-family: 'DM Mono', monospace; color: #2d7dd2; letter-spacing: 0.04em; line-height: 1; margin-bottom: 8px; }
+  .eta-duration { font-size: 13px; color: #7a9ab8; font-family: 'DM Mono', monospace; margin-bottom: 14px; }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 14px; border-top: 1px solid #1a2e42; }
+  .stat { background: #0c1824; border-radius: 6px; padding: 10px 12px; }
+  .stat-label { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #7a9ab8; font-family: 'DM Mono', monospace; margin-bottom: 3px; }
+  .stat-value { font-size: 18px; font-family: 'DM Mono', monospace; color: #c8e0f8; }
+  .seg-list { margin-top: 12px; padding-top: 12px; border-top: 1px solid #1a2e42; }
+  .seg-title { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #4a6a88; font-family: 'DM Mono', monospace; margin-bottom: 8px; }
+  .seg-row { display: flex; justify-content: space-between; align-items: baseline; padding: 5px 0; border-bottom: 1px solid #111e2a; font-family: 'DM Mono', monospace; }
+  .seg-name { font-size: 11px; color: #6a8aaa; }
+  .seg-val  { font-size: 12px; color: #a8c8e8; }
 
-/* Error banner */
-.err-banner{display:none;padding:10px 14px;margin:0 12px 0;border-radius:8px;background:rgba(239,83,80,.15);border:1px solid rgba(239,83,80,.3);color:#ef5350;font-size:13px}
-.err-banner.show{display:flex;align-items:center;gap:8px}
-.err-banner svg{width:16px;height:16px;flex-shrink:0}
-.err-banner a{color:#4fc3f7;text-decoration:underline}
+  /* ERROR */
+  .error-box { margin-top: 14px; padding: 10px 14px; background: #1a0a0a; border: 1px solid #4a1a1a; border-radius: 7px; color: #e05555; font-size: 14px; font-family: 'DM Mono', monospace; display: none; }
+  .error-box.show { display: block; }
 
-.tote-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
-.tote{position:relative;border:2px solid #455a64;border-radius:4px;background:#0d1b2a;overflow:hidden}
-.tote-lg{width:120px;height:170px}
-.tote-sm{width:48px;height:68px}
-.tote-cage{position:absolute;inset:0;opacity:.12;pointer-events:none}
-.tote-cage div{position:absolute;background:#8899aa}
-.tote-cage .ch{left:0;right:0;height:1px}
-.tote-cage .cv{top:0;bottom:0;width:1px}
-.tote-fluid{position:absolute;bottom:3px;left:3px;right:3px;border-radius:2px;transition:height .6s ease}
-.tote-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.7);z-index:2}
-.tote-pct-sm{font-size:15px;font-weight:700;color:#e0e0e0;text-align:center}
+  /* SETUP STATUS */
+  .setup-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 10px 14px;
+    background: #071828;
+    border: 1px solid #1a3048;
+    border-radius: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #4a8ac0;
+    letter-spacing: 0.07em;
+    cursor: pointer;
+  }
+  .setup-dot { width: 8px; height: 8px; border-radius: 50%; background: #1a3a5a; flex-shrink: 0; transition: background 0.3s; }
+  .setup-dot.ready { background: #2aaa6a; }
 
-.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
-.badge-dot{width:5px;height:5px;border-radius:50%}
-.badge-high{background:rgba(76,175,80,.2);color:#4caf50;border:1px solid rgba(76,175,80,.3)}
-.badge-high .badge-dot{background:#4caf50}
-.badge-medium{background:rgba(255,167,38,.2);color:#ffa726;border:1px solid rgba(255,167,38,.3)}
-.badge-medium .badge-dot{background:#ffa726}
-.badge-low{background:rgba(239,83,80,.2);color:#ef5350;border:1px solid rgba(239,83,80,.3)}
-.badge-low .badge-dot{background:#ef5350}
+  /* TOGGLES */
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0 4px; }
+  .toggle-label { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #b8cfe8; font-family: 'DM Mono', monospace; }
+  .toggle-switch { position: relative; width: 48px; height: 26px; flex-shrink: 0; }
+  .toggle-switch input { display: none; }
+  .toggle-track { position: absolute; inset: 0; background: #1a2e42; border-radius: 13px; cursor: pointer; transition: background 0.2s; }
+  .toggle-track::after { content: ''; position: absolute; left: 3px; top: 3px; width: 20px; height: 20px; background: #4a6a8a; border-radius: 50%; transition: transform 0.2s, background 0.2s; }
+  .toggle-switch input:checked + .toggle-track { background: #1a3e6a; }
+  .toggle-switch input:checked + .toggle-track::after { transform: translateX(22px); background: #2d7dd2; }
+  .collapsible { overflow: hidden; max-height: 0; opacity: 0; transition: max-height 0.3s ease, opacity 0.25s ease; }
+  .collapsible.open { max-height: 320px; opacity: 1; }
 
-.fill-bar{width:100%;height:6px;border-radius:3px;background:#0d1b2a;overflow:hidden}
-.fill-bar-lg{height:10px;border-radius:5px}
-.fill-inner{height:100%;border-radius:inherit;transition:width .3s}
+  .string-note { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-family: 'DM Mono', monospace; padding: 4px 10px; border-radius: 4px; margin-bottom: 10px; display: inline-block; }
+  .note-lower { background: #0d2a1a; color: #3aaa6a; border: 1px solid #1a5a30; }
+  .note-upper { background: #0d1a2a; color: #3a7add; border: 1px solid #1a3a6a; }
 
-input[type="range"]{width:100%;height:8px;border-radius:4px;-webkit-appearance:none;appearance:none;background:#0d1b2a;outline:none;cursor:pointer;border:none;padding:0}
-input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#4fc3f7;cursor:pointer;box-shadow:0 2px 8px rgba(79,195,247,.4);border:2px solid #0d1b2a}
-input[type="range"]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#4fc3f7;cursor:pointer;box-shadow:0 2px 8px rgba(79,195,247,.4);border:2px solid #0d1b2a}
-.slider-row{display:flex;align-items:center;gap:14px}
-.slider-fill{flex:1}
-.slider-labels{display:flex;justify-content:space-between;font-size:10px;color:#556;margin-top:4px}
-
-.vol-display{text-align:center;margin-top:8px;font-size:24px;font-weight:800;color:#4fc3f7}
-.vol-cap{font-size:13px;color:#888;font-weight:400;margin-left:6px}
-
-.img-frame{position:relative;border-radius:8px;overflow:hidden;border:1px solid #2d4a6f;margin-bottom:12px;background:#000}
-.img-frame img{width:100%;max-height:300px;object-fit:contain;display:block}
-.img-overlay{position:absolute;inset:0;background:rgba(0,0,0,.75);display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px}
-.img-overlay.show{display:flex}
-.spinner{animation:spin 1s linear infinite}
-@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-
-.analysis-row{display:flex;align-items:center;gap:16px}
-.analysis-detail{flex:1;font-size:13px;color:#888;line-height:1.6}
-.analysis-detail strong{color:#e0e0e0}
-
-.inv-item{display:flex;gap:10px;align-items:flex-start}
-.inv-info{flex:1;min-width:0}
-.inv-header{display:flex;justify-content:space-between;align-items:flex-start}
-.inv-name{font-size:15px;font-weight:700;line-height:1.1}
-.inv-sub{font-size:11px;color:#888;margin-top:2px}
-.inv-vol-row{display:flex;align-items:baseline;gap:8px;margin-top:6px;flex-wrap:wrap}
-.inv-vol{font-size:24px;font-weight:800;color:#4fc3f7}
-.inv-vol-cap{font-size:12px;color:#888}
-.inv-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:#556}
-.inv-notes{font-size:11px;color:#888;margin-top:4px;font-style:italic}
-.inv-actions{display:flex;gap:6px;flex-shrink:0}
-
-.alert-low{display:flex;align-items:center;gap:6px;margin-top:8px;padding:6px 10px;border-radius:6px;background:rgba(239,83,80,.1);border:1px solid rgba(239,83,80,.3);font-size:11px;color:#ef5350}
-.alert-low svg{width:14px;height:14px;flex-shrink:0}
-
-.summary-total{font-size:36px;font-weight:800;color:#4fc3f7;line-height:1}
-.summary-sub{font-size:13px;color:#888;margin-top:4px}
-.summary-pct{font-size:11px;color:#aaa;margin-top:4px}
-.summary-row{display:flex;justify-content:space-between;align-items:center}
-.summary-chem{display:flex;align-items:center;gap:8px}
-.summary-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
-.summary-chem-name{font-size:15px;font-weight:700;color:#e0e0e0}
-.summary-chem-vol{font-size:20px;font-weight:800;color:#4fc3f7}
-.summary-meta{display:flex;justify-content:space-between;font-size:11px;color:#888;margin-top:6px}
-
-.empty{text-align:center;padding:48px 20px;color:#556}
-.empty svg{width:48px;height:48px;opacity:.3}
-.empty h3{font-size:16px;color:#8899aa;margin-top:12px}
-.empty p{font-size:12px;color:#556;margin-top:4px}
-
-.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;z-index:400;transition:transform .3s ease;pointer-events:none}
-.toast.show{transform:translateX(-50%) translateY(0)}
-.toast-success{background:#2e7d32;color:#fff;box-shadow:0 4px 20px rgba(46,125,50,.5)}
-.toast svg{width:16px;height:16px}
-
-.filter-bar{display:flex;align-items:center;gap:8px}
-.filter-bar svg{width:16px;height:16px;stroke:#888;flex-shrink:0}
-.filter-bar select{padding:8px 30px 8px 10px;font-size:14px}
-
-.photo-hint{text-align:center;margin-top:8px;color:#556;font-size:12px}
-
-/* Setup screen */
-.setup-screen{display:none;position:fixed;inset:0;background:#1b2838;z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:24px}
-.setup-screen.show{display:flex}
-.setup-logo{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#1565c0,#0d47a1);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
-.setup-logo svg{width:32px;height:32px;fill:none;stroke:#fff;stroke-width:2}
-.setup-title{font-size:20px;font-weight:700;color:#e0e0e0;margin-bottom:4px}
-.setup-sub{font-size:13px;color:#888;margin-bottom:24px;text-align:center;max-width:300px}
-.setup-card{background:#243447;border-radius:12px;padding:20px;width:100%;max-width:360px;border:1px solid #2d4a6f}
-.setup-steps{margin-top:16px;font-size:12px;color:#888;line-height:1.8}
-.setup-steps strong{color:#4fc3f7}
-.setup-steps a{color:#4fc3f7}
-
-.hidden{display:none!important}
+  .clear-btn {
+    width: 100%;
+    margin-top: 28px;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid #2a1a1a;
+    border-radius: 8px;
+    color: #5a3a3a;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .clear-btn:hover { border-color: #7a2a2a; color: #e05555; }
+  .clear-btn:active { background: #1a0808; }
 </style>
 </head>
 <body>
+<div class="card">
 
-<!-- ═══ SETUP SCREEN ═══ -->
-<div class="setup-screen" id="setup">
-  <div class="setup-logo"><svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-  <div class="setup-title">IPS Chemical Inventory</div>
-  <div class="setup-sub">AI-powered tote scanning for accurate chemical billing. One-time setup required.</div>
-  <div class="setup-card">
-    <div class="field-group">
-      <label class="field-label">Anthropic API Key</label>
-      <input type="password" id="setup-key" placeholder="sk-ant-api03-..." autocomplete="off">
-      <div class="field-hint">Stored locally on this device only. Never sent anywhere except Anthropic.</div>
-    </div>
-    <button class="btn btn-green" onclick="saveSetupKey()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-      Save & Start
-    </button>
-    <div class="setup-steps">
-      <strong>How to get your key:</strong><br>
-      1. Go to <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br>
-      2. Sign in or create account<br>
-      3. Go to <strong>API Keys</strong><br>
-      4. Create key → copy it here<br><br>
-      ~$0.01 per scan (Claude Sonnet vision)
-    </div>
-  </div>
-</div>
-
-<!-- ═══ SETTINGS MODAL ═══ -->
-<div class="modal" id="settings-modal">
-  <div class="modal-box">
-    <div class="modal-title">Settings</div>
-    <div class="modal-sub">API Key & Configuration</div>
-    <div class="key-status" id="key-status"></div>
-    <div class="field-group">
-      <label class="field-label">Anthropic API Key</label>
-      <input type="password" id="settings-key" placeholder="sk-ant-api03-..." autocomplete="off">
-      <div class="field-hint">Stored locally on this device only.</div>
-    </div>
-    <div class="modal-btns">
-      <button class="btn btn-sec" onclick="closeSettings()">Cancel</button>
-      <button class="btn btn-green" style="padding:12px" onclick="saveSettingsKey()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-        Save
-      </button>
-    </div>
-    <div style="margin-top:16px;padding-top:12px;border-top:1px solid #2d4a6f">
-      <button class="btn btn-danger" style="width:100%;padding:10px;justify-content:center" onclick="removeKey()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-        Remove API Key
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ MAIN APP ═══ -->
-<div id="app">
+  <!-- APP HEADER -->
   <div class="app-header">
-    <div class="hdr-icon"><svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div class="app-title"><h1>INTELLIGENT PETROLEUM SOLUTIONS LLC</h1><p>Chemical Inventory</p></div>
-    <div class="hdr-actions">
-      <button class="hdr-btn" id="gear-btn" onclick="openSettings()" title="Settings">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      </button>
+    <div class="app-title"><span>Fidel's</span> Marker Calculator</div>
+    <div class="app-sub">Full Circ &mdash; Down Tbg / Up Annulus</div>
+  </div>
+
+  <!-- PILL TABS -->
+  <div class="tab-bar">
+    <button class="tab-pill active" onclick="switchTab('marker')">Marker</button>
+    <button class="tab-pill"        onclick="switchTab('wellbore')">Wellbore</button>
+  </div>
+
+  <!-- ══════════════════════════════════
+       MARKER TAB
+  ══════════════════════════════════ -->
+  <div class="tab-panel active" id="tab-marker">
+
+    <div class="setup-status" onclick="switchTab('wellbore')" title="Tap to configure wellbore">
+      <div class="setup-dot" id="setupDot"></div>
+      <span id="setupText">Wellbore not configured &mdash; tap to set up</span>
     </div>
-  </div>
 
-  <!-- Error Banner -->
-  <div class="err-banner" id="err-banner">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    <span id="err-msg"></span>
-  </div>
+    <div class="divider" style="margin-top:0;">
+      <div class="divider-line"></div>
+      <span class="divider-label">Pump</span>
+      <div class="divider-line"></div>
+    </div>
 
-  <div class="main-tabs">
-    <button class="main-tab active" data-tab="scan" onclick="switchTab('scan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Scan</button>
-    <button class="main-tab" data-tab="inventory" onclick="switchTab('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Inventory<span class="tab-badge hidden" id="inv-badge"></span></button>
-    <button class="main-tab" data-tab="summary" onclick="switchTab('summary')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Summary</button>
-  </div>
-
-  <!-- SCAN TAB -->
-  <div class="tab-content active" id="tab-scan"><div class="body">
-    <div class="card">
-      <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Capture Tote Image</div>
-      <input type="file" id="fi" accept="image/*" capture="environment" style="display:none" onchange="handleImage(this)">
-      <div id="no-img"><button class="btn btn-primary" onclick="document.getElementById('fi').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Take Photo</button><div class="photo-hint">or tap to select from gallery</div></div>
-      <div id="has-img" class="hidden">
-        <div class="img-frame"><img id="prev" src="" alt=""><div class="img-overlay" id="ov"><svg class="spinner" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg><span style="font-size:14px;font-weight:700;color:#4fc3f7;letter-spacing:1px;text-transform:uppercase">Analyzing...</span></div></div>
-        <div class="btn-row"><button class="btn btn-primary" id="abtn" onclick="runAI()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Analyze Fill Level</button><button class="btn btn-sec" onclick="clearScan()" style="flex:0">✕</button></div>
-        <div class="btn-row hidden" id="re-row" style="margin-top:8px"><button class="btn btn-sec" onclick="runAI()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Re-Analyze</button></div>
+    <div class="row-2">
+      <div class="field">
+        <div class="field-header"><label>Rate In</label><span class="unit">BPM</span></div>
+        <input type="number" id="pumpIn" inputmode="decimal" placeholder="1.5" step="0.1">
+      </div>
+      <div class="field">
+        <div class="field-header"><label>Rate Out</label><span class="unit">BPM</span></div>
+        <input type="number" id="pumpOut" inputmode="decimal" placeholder="1.5" step="0.1">
       </div>
     </div>
-    <div class="card hl hidden" id="ai-card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div class="card-title" style="margin:0;border:none;padding:0">AI Analysis</div><span id="cbadge"></span></div>
-      <div class="analysis-row"><div id="ai-gauge"></div><div class="analysis-detail" id="ai-det"></div></div>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-label">Depth &amp; Time</span>
+      <div class="divider-line"></div>
     </div>
-    <div class="card">
-      <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Fill Level — <span id="pl">50</span>%</div>
-      <div class="slider-row">
-        <div class="tote-wrap"><div class="tote tote-sm"><div class="tote-cage"><div class="ch" style="top:33%"></div><div class="ch" style="top:66%"></div><div class="cv" style="left:50%"></div></div><div class="tote-fluid" id="sf" style="height:28px;background:#4fc3f7"></div></div><div class="tote-pct-sm" id="sp">50%</div></div>
-        <div class="slider-fill"><input type="range" id="fs" min="0" max="100" value="50" oninput="uFill(this.value)"><div class="slider-labels"><span>Empty</span><span>Full</span></div></div>
+
+    <div class="field">
+      <div class="field-header"><label>Current Depth</label><span class="unit">feet</span></div>
+      <input type="number" id="depth" inputmode="decimal" placeholder="12000" step="1">
+    </div>
+
+    <div class="field">
+      <div class="field-header"><label>Time Sent</label><span class="unit">HH:MM AM/PM</span></div>
+      <input type="text" id="timeSent" placeholder="10:30 AM">
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">Calculate ETA</button>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <div class="result-box" id="resultBox">
+      <div class="eta-label">Marker Expected At Surface</div>
+      <div class="eta-time" id="etaTime">—</div>
+      <div class="eta-duration" id="etaDuration"></div>
+      <div class="stats-grid">
+        <div class="stat"><div class="stat-label">Tbg Vol</div><div class="stat-value" id="statTbg">—</div></div>
+        <div class="stat"><div class="stat-label">Ann Vol</div><div class="stat-value" id="statAnn">—</div></div>
+        <div class="stat"><div class="stat-label">Total Circ</div><div class="stat-value" id="statTotal">—</div></div>
+        <div class="stat"><div class="stat-label">Avg Rate</div><div class="stat-value" id="statRate">—</div></div>
       </div>
-      <div class="vol-display hidden" id="vd">≈ <span id="ev">0</span> gal<span class="vol-cap">of <span id="cv">0</span> gal</span></div>
+      <div class="seg-list" id="segList"></div>
     </div>
-    <div class="card">
-      <div class="card-title">Chemical Details</div>
-      <div class="field-group"><label class="field-label">Chemical Type</label><select id="cs" onchange="oCC()"><option>Friction Reducer</option><option>Clay Stabilizer</option><option>Biocide</option><option>Scale Inhibitor</option><option>Corrosion Inhibitor</option><option>Surfactant</option><option>Pipe-on-Pipe Lube</option><option>HCl Acid</option><option>Linear Gel</option><option>Crosslinker</option><option>Breaker</option><option>Iron Control</option><option>H2S Scavenger</option><option>Defoamer</option><option>Emulsion Breaker</option><option>KCl / Salt</option><option>Other</option></select></div>
-      <div class="field-group hidden" id="ccg"><label class="field-label">Chemical Name</label><input type="text" id="cc" placeholder="Enter chemical name"></div>
-      <div class="field-group"><label class="field-label">Container Size</label><select id="cts" onchange="oCT()"><option value="275">275 gal IBC Tote</option><option value="330">330 gal IBC Tote</option><option value="55">55 gal Drum</option><option value="5">5 gal Bucket</option><option value="custom">Custom</option></select></div>
-      <div class="field-group hidden" id="cgg"><label class="field-label">Custom Capacity (gal)</label><input type="number" id="cg" placeholder="Total gallons" oninput="uVol()"></div>
-      <div class="field-group"><label class="field-label">Location / Well</label><input type="text" id="li" placeholder="e.g. Justin SWD #1"></div>
-      <div class="field-group"><label class="field-label">Notes</label><input type="text" id="ni" placeholder="Optional notes"></div>
+
+  </div>
+
+  <!-- ══════════════════════════════════
+       WELLBORE TAB
+  ══════════════════════════════════ -->
+  <div class="tab-panel" id="tab-wellbore">
+
+    <!-- CASING -->
+    <div class="divider" style="margin-top:0;">
+      <div class="divider-line"></div>
+      <span class="divider-label">Casing</span>
+      <div class="divider-line"></div>
     </div>
-    <button class="btn btn-green" id="addbtn" onclick="addItem()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add to Inventory</button>
-    <button class="btn btn-sec hidden" id="canbtn" style="width:100%;margin-top:8px" onclick="cancelEdit()">Cancel Edit</button>
-  </div></div>
 
-  <!-- INVENTORY TAB -->
-  <div class="tab-content" id="tab-inventory"><div class="body">
-    <div class="card filter-bar" style="padding:10px 12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><select id="fsel" onchange="rInv()"></select></div>
-    <div id="ilist"></div>
-  </div></div>
+    <div class="field">
+      <div class="field-header"><label>Casing ID</label><span class="unit">inches</span></div>
+      <input type="number" id="casingID" inputmode="decimal" placeholder="6.276" step="0.001" oninput="updateSetupStatus();saveWellbore()">
+    </div>
 
-  <!-- SUMMARY TAB -->
-  <div class="tab-content" id="tab-summary"><div class="body" id="sbody"></div></div>
-</div>
+    <!-- TUBING -->
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-label">Tubing</span>
+      <div class="divider-line"></div>
+    </div>
 
-<div class="toast toast-success" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span id="tmsg">Added</span></div>
+    <span class="string-note note-lower" id="lowerNote">Single string (surface to bit)</span>
+
+    <div class="row-2">
+      <div class="field">
+        <div class="field-header"><label>Tbg OD</label><span class="unit">in</span></div>
+        <input type="number" id="tbgOD" inputmode="decimal" placeholder="2.375" step="0.001" oninput="updateSetupStatus();saveWellbore()">
+      </div>
+      <div class="field">
+        <div class="field-header"><label>Tbg ID</label><span class="unit">in</span></div>
+        <input type="number" id="tbgID" inputmode="decimal" placeholder="1.995" step="0.001" oninput="updateSetupStatus();saveWellbore()">
+      </div>
+    </div>
+
+    <!-- SPLIT STRING -->
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-label">Split String</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="toggle-row">
+      <span class="toggle-label">Split String</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="splitToggle" onchange="toggleSplit();saveWellbore()">
+        <div class="toggle-track"></div>
+      </label>
+    </div>
+
+    <div class="collapsible" id="splitFields">
+      <div style="height:12px;"></div>
+      <span class="string-note note-upper" style="display:inline-block;margin-bottom:12px;">Upper string &mdash; surface to split depth</span>
+      <div class="row-3">
+        <div class="field">
+          <div class="field-header"><label>OD</label><span class="unit">in</span></div>
+          <input type="number" id="upperOD" inputmode="decimal" placeholder="2.875" step="0.001" oninput="updateSetupStatus();saveWellbore()">
+        </div>
+        <div class="field">
+          <div class="field-header"><label>ID</label><span class="unit">in</span></div>
+          <input type="number" id="upperID" inputmode="decimal" placeholder="2.441" step="0.001" oninput="updateSetupStatus();saveWellbore()">
+        </div>
+        <div class="field">
+          <div class="field-header"><label>Depth</label><span class="unit">ft</span></div>
+          <input type="number" id="splitDepth" inputmode="decimal" placeholder="9000" step="1" oninput="updateSetupStatus();saveWellbore()">
+        </div>
+      </div>
+    </div>
+
+    <!-- LINER -->
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-label">Liner</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="toggle-row">
+      <span class="toggle-label">Liner Present</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="linerToggle" onchange="toggleLiner();saveWellbore()">
+        <div class="toggle-track"></div>
+      </label>
+    </div>
+
+    <div class="collapsible" id="linerFields">
+      <div style="height:12px;"></div>
+      <div class="row-2">
+        <div class="field">
+          <div class="field-header"><label>Liner Top</label><span class="unit">ft</span></div>
+          <input type="number" id="linerTop" inputmode="decimal" placeholder="10000" step="1" oninput="updateSetupStatus();saveWellbore()">
+        </div>
+        <div class="field">
+          <div class="field-header"><label>Liner ID</label><span class="unit">in</span></div>
+          <input type="number" id="linerID" inputmode="decimal" placeholder="4.892" step="0.001" oninput="updateSetupStatus();saveWellbore()">
+        </div>
+      </div>
+    </div>
+
+    <button class="clear-btn" onclick="clearWellbore()">&#x2715; Clear Wellbore Profile</button>
+  </div><!-- end wellbore tab -->
+
+</div><!-- end card -->
 
 <script>
-const CC={"Friction Reducer":"#ff6b35","Clay Stabilizer":"#4db6ac","Biocide":"#ef5350","Scale Inhibitor":"#42a5f5","Corrosion Inhibitor":"#ba68c8","Surfactant":"#66bb6a","Pipe-on-Pipe Lube":"#ffa726","HCl Acid":"#ef5350","Linear Gel":"#4fc3f7","Crosslinker":"#455a64","Breaker":"#8d6e63","Iron Control":"#b5838d","H2S Scavenger":"#78909c","Defoamer":"#ce93d8","Emulsion Breaker":"#90caf9","KCl / Salt":"#80cbc4","Other":"#90a4ae"};
-let inv=[],eid=null,anl=null,ib64=null,itp="image/jpeg";
+  // ── LOCALSTORAGE FIELD IDS ─────────────────────────────
+  const WB_FIELDS = ["casingID","tbgOD","tbgID","upperOD","upperID","splitDepth","linerTop","linerID"];
+  const WB_TOGGLES = ["splitToggle","linerToggle"];
 
-// ═══ API KEY MANAGEMENT ═══
-function getKey(){return localStorage.getItem("ips-ci-key")||"";}
-function setKey(k){localStorage.setItem("ips-ci-key",k);updateGear();}
-function hasKey(){return getKey().startsWith("sk-");}
-
-function updateGear(){
-  const g=document.getElementById('gear-btn');
-  if(hasKey()){g.classList.add('active');g.classList.remove('needs-key');}
-  else{g.classList.remove('active');g.classList.add('needs-key');}
-}
-
-function checkSetup(){
-  if(!hasKey())document.getElementById('setup').classList.add('show');
-  else document.getElementById('setup').classList.remove('show');
-  updateGear();
-}
-
-function saveSetupKey(){
-  const k=document.getElementById('setup-key').value.trim();
-  if(!k.startsWith('sk-')){showToast('Key should start with sk-');return;}
-  setKey(k);
-  document.getElementById('setup').classList.remove('show');
-  showToast('API Key Saved ✓');
-}
-
-function openSettings(){
-  const m=document.getElementById('settings-modal');
-  const s=document.getElementById('key-status');
-  const inp=document.getElementById('settings-key');
-  if(hasKey()){
-    const k=getKey();
-    inp.value=k;
-    s.className='key-status connected';
-    s.innerHTML=`<div class="badge-dot" style="background:#4caf50;width:8px;height:8px;border-radius:50%"></div>Connected — Key ending in ...${k.slice(-6)}`;
-  }else{
-    inp.value='';
-    s.className='key-status missing';
-    s.innerHTML=`<div class="badge-dot" style="background:#ef5350;width:8px;height:8px;border-radius:50%"></div>No API key configured`;
-  }
-  m.classList.add('show');
-}
-
-function closeSettings(){document.getElementById('settings-modal').classList.remove('show');}
-
-function saveSettingsKey(){
-  const k=document.getElementById('settings-key').value.trim();
-  if(!k.startsWith('sk-')){showToast('Key should start with sk-');return;}
-  setKey(k);closeSettings();showToast('API Key Updated ✓');
-}
-
-function removeKey(){
-  if(!confirm('Remove API key? You will need to re-enter it to use AI analysis.'))return;
-  localStorage.removeItem("ips-ci-key");updateGear();closeSettings();showToast('API Key Removed');
-}
-
-function showErr(msg){const e=document.getElementById('err-banner');document.getElementById('err-msg').innerHTML=msg;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),8000);}
-function hideErr(){document.getElementById('err-banner').classList.remove('show');}
-
-// ═══ STORAGE ═══
-function ld(){try{const d=localStorage.getItem("ips-ci");inv=d?JSON.parse(d):[];}catch(e){inv=[];}}
-function sv(){try{localStorage.setItem("ips-ci",JSON.stringify(inv));}catch(e){}}
-
-// ═══ TABS ═══
-function switchTab(t){document.querySelectorAll('.main-tab').forEach(e=>e.classList.toggle('active',e.dataset.tab===t));document.querySelectorAll('.tab-content').forEach(e=>e.classList.toggle('active',e.id==='tab-'+t));if(t==='inventory')rInv();if(t==='summary')rSum();}
-
-// ═══ TOTE GAUGE ═══
-function tH(p,c,lg){
-  const h=lg?170:68,fH=Math.max(0,(p/100)*(h-10)),cH=lg?[20,40,60,80]:[33,66],cV=lg?[25,50,75]:[50];
-  let s=`<div class="tote ${lg?'tote-lg':'tote-sm'}"><div class="tote-cage">`;
-  cH.forEach(v=>{s+=`<div class="ch" style="top:${v}%"></div>`;});
-  cV.forEach(v=>{s+=`<div class="cv" style="left:${v}%"></div>`;});
-  s+=`</div><div class="tote-fluid" style="height:${fH}px;background:linear-gradient(180deg,${c}cc,${c});box-shadow:0 -2px 10px ${c}44"></div>`;
-  if(lg)s+=`<div class="tote-pct">${Math.round(p)}%</div>`;
-  s+=`</div>`;if(!lg)s+=`<div class="tote-pct-sm">${Math.round(p)}%</div>`;return s;
-}
-
-// ═══ IMAGE ═══
-function handleImage(inp){const f=inp.files&&inp.files[0];if(!f)return;anl=null;itp=f.type||"image/jpeg";const r=new FileReader();r.onload=function(e){ib64=e.target.result.split(',')[1];document.getElementById('prev').src=e.target.result;document.getElementById('no-img').classList.add('hidden');document.getElementById('has-img').classList.remove('hidden');document.getElementById('abtn').classList.remove('hidden');document.getElementById('re-row').classList.add('hidden');document.getElementById('ai-card').classList.add('hidden');hideErr();};r.readAsDataURL(f);}
-function clearScan(){ib64=null;anl=null;document.getElementById('fi').value='';document.getElementById('no-img').classList.remove('hidden');document.getElementById('has-img').classList.add('hidden');document.getElementById('ai-card').classList.add('hidden');document.getElementById('re-row').classList.add('hidden');hideErr();}
-
-// ═══ AI ANALYSIS ═══
-async function runAI(){
-  if(!ib64)return;
-  if(!hasKey()){showErr('No API key. Tap the <a href="#" onclick="openSettings();return false;">⚙ gear</a> to add one.');return;}
-  document.getElementById('ov').classList.add('show');document.getElementById('abtn').classList.add('hidden');hideErr();
-  try{
-    const resp=await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{"Content-Type":"application/json","x-api-key":getKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-      body:JSON.stringify({model:"claude-sonnet-4-5-20250929",max_tokens:1000,messages:[{role:"user",content:[
-        {type:"image",source:{type:"base64",media_type:itp,data:ib64}},
-        {type:"text",text:`You are an oilfield chemical inventory assistant. Analyze this image of a chemical container (likely an IBC tote, drum, or bucket used in oil & gas operations).
-
-This measurement will be used for customer billing so accuracy is critical. Estimate:
-1. The fluid fill level as a percentage (0-100%). Look carefully for the visible fluid line through translucent container walls, color changes, condensation lines, weight indicators, or other visual indicators. If the tote walls are opaque, note this.
-2. Your confidence in the estimate (high, medium, low).
-3. The apparent color/opacity of the fluid if visible.
-4. The container type if identifiable (IBC tote, drum, bucket, etc.) and capacity.
-5. Any visible product label or chemical name on the container.
-
-If you cannot clearly determine the fill level, give your best estimate and set confidence to "low".
-
-Respond ONLY with valid JSON. No markdown, no backticks:
-{"fill_percent":75,"confidence":"medium","fluid_color":"amber/clear","container_type":"275 gal IBC tote","product_label":null,"notes":"Fluid line visible approximately 3/4 up the container"}`}
-      ]}]})
+  function saveWellbore() {
+    WB_FIELDS.forEach(function(id) {
+      localStorage.setItem("wb_" + id, document.getElementById(id).value);
     });
-    if(!resp.ok){
-      const err=await resp.json().catch(()=>({}));
-      if(resp.status===401)showErr('Invalid API key. Tap <a href="#" onclick="openSettings();return false;">⚙ gear</a> to update.');
-      else if(resp.status===429)showErr('Rate limited. Wait a moment and try again.');
-      else if(resp.status===400)showErr('Bad request: '+(err.error?.message||'Check image format.'));
-      else showErr('API error ('+resp.status+'): '+(err.error?.message||'Unknown error'));
-      document.getElementById('ov').classList.remove('show');document.getElementById('abtn').classList.remove('hidden');return;
+    WB_TOGGLES.forEach(function(id) {
+      localStorage.setItem("wb_" + id, document.getElementById(id).checked ? "1" : "0");
+    });
+  }
+
+  function loadWellbore() {
+    WB_FIELDS.forEach(function(id) {
+      const v = localStorage.getItem("wb_" + id);
+      if (v !== null) document.getElementById(id).value = v;
+    });
+    WB_TOGGLES.forEach(function(id) {
+      const v = localStorage.getItem("wb_" + id);
+      if (v === "1") {
+        document.getElementById(id).checked = true;
+        if (id === "splitToggle") toggleSplit();
+        if (id === "linerToggle") toggleLiner();
+      }
+    });
+  }
+
+  function clearWellbore() {
+    if (!confirm("Clear all wellbore data and start fresh?")) return;
+    WB_FIELDS.forEach(function(id) {
+      document.getElementById(id).value = "";
+      localStorage.removeItem("wb_" + id);
+    });
+    WB_TOGGLES.forEach(function(id) {
+      document.getElementById(id).checked = false;
+      localStorage.removeItem("wb_" + id);
+    });
+    toggleSplit();
+    toggleLiner();
+    updateSetupStatus();
+  }
+
+  window.onload = () => {
+    const now = new Date();
+    let h = now.getHours();
+    const m = now.getMinutes().toString().padStart(2, "0");
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    document.getElementById("timeSent").value = h + ":" + m + " " + ampm;
+    loadWellbore();
+    updateSetupStatus();
+  };
+
+  function switchTab(name) {
+    document.querySelectorAll(".tab-pill").forEach(function(p, i) {
+      p.classList.toggle("active", (i === 0 ? "marker" : "wellbore") === name);
+    });
+    document.querySelectorAll(".tab-panel").forEach(function(p) {
+      p.classList.toggle("active", p.id === "tab-" + name);
+    });
+  }
+
+  function toggleSplit() {
+    const on = document.getElementById("splitToggle").checked;
+    document.getElementById("splitFields").className = on ? "collapsible open" : "collapsible";
+    document.getElementById("lowerNote").textContent = on
+      ? "Lower string — split depth to bit"
+      : "Single string (surface to bit)";
+    updateSetupStatus();
+  }
+
+  function toggleLiner() {
+    const on = document.getElementById("linerToggle").checked;
+    document.getElementById("linerFields").className = on ? "collapsible open" : "collapsible";
+    updateSetupStatus();
+  }
+
+  function updateSetupStatus() {
+    const cID = parseFloat(document.getElementById("casingID").value);
+    const tOD = parseFloat(document.getElementById("tbgOD").value);
+    const tID = parseFloat(document.getElementById("tbgID").value);
+    const hasSplit  = document.getElementById("splitToggle").checked;
+    const hasLiner  = document.getElementById("linerToggle").checked;
+
+    const baseOk = !isNaN(cID) && !isNaN(tOD) && !isNaN(tID) && cID > 0 && tOD > 0 && tID > 0;
+
+    let splitOk = true;
+    if (hasSplit) {
+      const uOD = parseFloat(document.getElementById("upperOD").value);
+      const uID = parseFloat(document.getElementById("upperID").value);
+      const sd  = parseFloat(document.getElementById("splitDepth").value);
+      splitOk = !isNaN(uOD) && !isNaN(uID) && !isNaN(sd) && uOD > 0 && uID > 0 && sd > 0;
     }
-    const data=await resp.json();const txt=(data.content||[]).map(b=>b.type==='text'?b.text:'').join('');
-    anl=JSON.parse(txt.replace(/```json|```/g,'').trim());
-    document.getElementById('fs').value=anl.fill_percent;uFill(anl.fill_percent);
-    if(anl.container_type){const t=anl.container_type.toLowerCase(),s=document.getElementById('cts');if(t.includes('275'))s.value='275';else if(t.includes('330'))s.value='330';else if(t.includes('drum')||t.includes('55'))s.value='55';else if(t.includes('bucket')||t.includes('5 gal'))s.value='5';oCT();}
-    if(anl.product_label){const lb=anl.product_label.toLowerCase(),s=document.getElementById('cs');for(let i=0;i<s.options.length;i++){if(lb.includes(s.options[i].value.toLowerCase())){s.value=s.options[i].value;oCC();break;}}}
-    showAI();
-  }catch(e){console.error(e);showErr('Connection failed. Check internet and try again.');}
-  document.getElementById('ov').classList.remove('show');document.getElementById('re-row').classList.remove('hidden');
-}
 
-function showAI(){if(!anl)return;document.getElementById('ai-card').classList.remove('hidden');const c=anl.confidence||'low';document.getElementById('cbadge').innerHTML=`<span class="badge badge-${c}"><span class="badge-dot"></span>${c}</span>`;const col=CC[document.getElementById('cs').value]||'#4fc3f7';document.getElementById('ai-gauge').innerHTML=tH(anl.fill_percent,col,true);let d='';if(anl.container_type)d+=`<div><strong>Detected:</strong> ${anl.container_type}</div>`;if(anl.fluid_color)d+=`<div><strong>Fluid:</strong> ${anl.fluid_color}</div>`;if(anl.product_label)d+=`<div><strong>Label:</strong> ${anl.product_label}</div>`;if(anl.notes)d+=`<div style="margin-top:8px;font-size:12px;color:#667">${anl.notes}</div>`;document.getElementById('ai-det').innerHTML=d;}
+    let linerOk = true;
+    if (hasLiner) {
+      const lt  = parseFloat(document.getElementById("linerTop").value);
+      const lid = parseFloat(document.getElementById("linerID").value);
+      linerOk = !isNaN(lt) && !isNaN(lid) && lt > 0 && lid > 0;
+    }
 
-// ═══ FILL / VOLUME ═══
-function gGal(){const v=document.getElementById('cts').value;return v==='custom'?(parseFloat(document.getElementById('cg').value)||0):parseFloat(v);}
-function uFill(v){v=parseInt(v);document.getElementById('pl').textContent=v;document.getElementById('sp').textContent=v+'%';const fH=Math.max(0,(v/100)*58),col=CC[document.getElementById('cs').value]||'#4fc3f7',fl=document.getElementById('sf');fl.style.height=fH+'px';fl.style.background=`linear-gradient(180deg,${col}cc,${col})`;fl.style.boxShadow=`0 -2px 10px ${col}44`;uVol();}
-function uVol(){const g=gGal(),p=parseInt(document.getElementById('fs').value),v=Math.round((p/100)*g*10)/10,d=document.getElementById('vd');if(g>0){d.classList.remove('hidden');document.getElementById('ev').textContent=v;document.getElementById('cv').textContent=g;}else d.classList.add('hidden');}
-function oCC(){document.getElementById('ccg').classList.toggle('hidden',document.getElementById('cs').value!=='Other');uFill(document.getElementById('fs').value);if(anl)showAI();}
-function oCT(){document.getElementById('cgg').classList.toggle('hidden',document.getElementById('cts').value!=='custom');uVol();}
+    const ready = baseOk && splitOk && linerOk;
+    document.getElementById("setupDot").className = ready ? "setup-dot ready" : "setup-dot";
 
-// ═══ ADD / EDIT ═══
-function addItem(){
-  const cv=document.getElementById('cs').value,cn=cv==='Other'?(document.getElementById('cc').value||'Other'):cv;
-  const cts=document.getElementById('cts'),cl=cts.options[cts.selectedIndex].text,g=gGal(),p=parseInt(document.getElementById('fs').value);
-  const it={id:eid||Date.now().toString(),chemical:cn,containerLabel:cl,containerGallons:g,fillPercent:p,estimatedVolume:Math.round((p/100)*g*10)/10,location:document.getElementById('li').value.trim(),notes:document.getElementById('ni').value.trim(),timestamp:new Date().toISOString(),aiConfidence:anl?(anl.confidence||'manual'):'manual',fluidColor:anl?(anl.fluid_color||''):''};
-  if(eid){const i=inv.findIndex(x=>x.id===eid);if(i>=0)inv[i]=it;eid=null;}else inv.unshift(it);
-  sv();uBadge();showToast(eid?'Item Updated':'Added to Inventory');resetForm();
-}
-function resetForm(){clearScan();eid=null;document.getElementById('cs').value='Friction Reducer';oCC();document.getElementById('cts').value='275';oCT();document.getElementById('li').value='';document.getElementById('ni').value='';document.getElementById('fs').value=50;uFill(50);document.getElementById('addbtn').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add to Inventory';document.getElementById('canbtn').classList.add('hidden');}
-function editItem(id){
-  const it=inv.find(x=>x.id===id);if(!it)return;eid=id;
-  const cs=document.getElementById('cs'),has=[...cs.options].some(o=>o.value===it.chemical);cs.value=has?it.chemical:'Other';oCC();if(!has)document.getElementById('cc').value=it.chemical;
-  const cts=document.getElementById('cts'),m=[...cts.options].find(o=>parseFloat(o.value)===it.containerGallons);if(m)cts.value=m.value;else{cts.value='custom';document.getElementById('cg').value=it.containerGallons;}oCT();
-  document.getElementById('fs').value=it.fillPercent;uFill(it.fillPercent);document.getElementById('li').value=it.location;document.getElementById('ni').value=it.notes;
-  document.getElementById('addbtn').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>Update Item';document.getElementById('canbtn').classList.remove('hidden');switchTab('scan');window.scrollTo(0,0);
-}
-function cancelEdit(){resetForm();}
-function deleteItem(id){inv=inv.filter(x=>x.id!==id);sv();uBadge();rInv();}
+    let parts = [];
+    if (baseOk) {
+      parts.push(tOD + '" tbg in ' + cID + '" casing');
+    }
+    if (hasSplit && splitOk) {
+      const uOD = document.getElementById("upperOD").value;
+      const sd  = document.getElementById("splitDepth").value;
+      parts.push("split " + uOD + '" @ ' + sd + "'");
+    }
+    if (hasLiner && linerOk) {
+      const lt  = document.getElementById("linerTop").value;
+      const lid = document.getElementById("linerID").value;
+      parts.push("liner " + lid + '" @ ' + lt + "'");
+    }
 
-// ═══ INVENTORY ═══
-function rInv(){
-  const fv=document.getElementById('fsel').value,list=fv==='All'?inv:inv.filter(x=>x.chemical===fv),el=document.getElementById('ilist');
-  const uq=[...new Set(inv.map(x=>x.chemical))],fs=document.getElementById('fsel'),pv=fs.value;
-  fs.innerHTML=`<option value="All">All Chemicals (${inv.length})</option>`+uq.map(c=>`<option value="${c}">${c} (${inv.filter(x=>x.chemical===c).length})</option>`).join('');
-  if([...fs.options].some(o=>o.value===pv))fs.value=pv;
-  if(!list.length){el.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><h3>No Items Yet</h3><p>Scan a tote to start building inventory</p></div>`;return;}
-  el.innerHTML=list.map(it=>{
-    const col=CC[it.chemical]||'#90a4ae',ts=new Date(it.timestamp),tm=ts.toLocaleDateString()+' '+ts.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-    const bg=it.aiConfidence&&it.aiConfidence!=='manual'?`<span class="badge badge-${it.aiConfidence}"><span class="badge-dot"></span>${it.aiConfidence}</span>`:'';
-    const lw=it.fillPercent<25?`<div class="alert-low"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Low — consider reorder</div>`:'';
-    return `<div class="card" style="border-left:4px solid ${col}"><div class="inv-item"><div class="tote-wrap">${tH(it.fillPercent,col,false)}</div><div class="inv-info"><div class="inv-header"><div><div class="inv-name" style="color:${col}">${it.chemical}</div><div class="inv-sub">${it.containerLabel}</div></div><div class="inv-actions"><button class="btn btn-sec" style="padding:6px 10px" onclick="editItem('${it.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg></button><button class="btn btn-danger" onclick="deleteItem('${it.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div></div><div class="inv-vol-row"><span class="inv-vol">${it.estimatedVolume} gal</span><span class="inv-vol-cap">/ ${it.containerGallons} gal</span>${bg}</div><div class="fill-bar" style="margin-top:8px"><div class="fill-inner" style="width:${it.fillPercent}%;background:${col}"></div></div><div class="inv-meta"><span>${it.location||'No location'}</span><span>${tm}</span></div>${it.notes?`<div class="inv-notes">${it.notes}</div>`:''}${lw}</div></div></div>`;
-  }).join('');
-}
+    const dot = document.getElementById("setupText");
+    if (ready && parts.length > 0) {
+      dot.textContent = parts.join(" · ");
+    } else if (!ready) {
+      dot.textContent = "Wellbore not configured — tap to set up";
+    }
+  }
 
-// ═══ SUMMARY ═══
-function rSum(){
-  const el=document.getElementById('sbody'),tg=inv.reduce((s,i)=>s+i.estimatedVolume,0),tc=inv.reduce((s,i)=>s+i.containerGallons,0);
-  const grp={};inv.forEach(i=>{if(!grp[i.chemical])grp[i.chemical]={n:0,v:0,c:0,f:0};grp[i.chemical].n++;grp[i.chemical].v+=i.estimatedVolume;grp[i.chemical].c+=i.containerGallons;grp[i.chemical].f+=i.fillPercent;});
-  const sorted=Object.entries(grp).sort((a,b)=>b[1].v-a[1].v);
-  let h=`<div class="card hl" style="text-align:center"><div class="card-title" style="justify-content:center">Total Chemical Inventory</div><div class="summary-total">${Math.round(tg).toLocaleString()} gal</div><div class="summary-sub">${inv.length} container${inv.length!==1?'s':''} — ${tc.toLocaleString()} gal capacity</div><div class="fill-bar fill-bar-lg" style="margin-top:12px"><div class="fill-inner" style="width:${tc>0?(tg/tc*100):0}%;background:#4fc3f7"></div></div><div class="summary-pct">${tc>0?Math.round(tg/tc*100):0}% overall fill</div></div>`;
-  if(!sorted.length)h+=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><h3>No Data Yet</h3></div>`;
-  else sorted.forEach(([ch,d])=>{const col=CC[ch]||'#90a4ae',avg=Math.round(d.f/d.n),lw=avg<25?`<div class="alert-low"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Low inventory — consider reorder</div>`:'';h+=`<div class="card"><div class="summary-row"><div class="summary-chem"><div class="summary-dot" style="background:${col}"></div><span class="summary-chem-name">${ch}</span></div><span class="summary-chem-vol">${Math.round(d.v)} gal</span></div><div class="summary-meta"><span>${d.n} container${d.n!==1?'s':''}</span><span>${d.c} gal capacity</span><span>Avg: ${avg}%</span></div><div class="fill-bar" style="margin-top:8px"><div class="fill-inner" style="width:${avg}%;background:${col}"></div></div>${lw}</div>`;});
-  if(inv.length)h+=`<div style="text-align:center;margin-top:16px"><button class="btn btn-sec" style="display:inline-flex" onclick="if(confirm('Clear all inventory?')){inv=[];sv();uBadge();rSum();}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Clear All</button></div>`;
-  el.innerHTML=h;
-}
+  function parseTime(str) {
+    const match = str.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (!match) return null;
+    let h = parseInt(match[1]);
+    const m = parseInt(match[2]);
+    const ampm = match[3].toUpperCase();
+    if (ampm === "PM" && h !== 12) h += 12;
+    if (ampm === "AM" && h === 12) h = 0;
+    if (h > 23 || m > 59) return null;
+    const d = new Date();
+    d.setHours(h, m, 0, 0);
+    return d;
+  }
 
-// ═══ UTILS ═══
-function uBadge(){const b=document.getElementById('inv-badge');if(inv.length){b.textContent=inv.length;b.classList.remove('hidden');}else b.classList.add('hidden');}
-function showToast(m){const t=document.getElementById('toast');document.getElementById('tmsg').textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+  function formatTime(date) {
+    let h = date.getHours();
+    const m = date.getMinutes().toString().padStart(2, "0");
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    return h + ":" + m + " " + ampm;
+  }
 
-// ═══ INIT ═══
-ld();uBadge();uFill(50);checkSetup();
+  function err(msg) {
+    document.getElementById("errorBox").textContent = msg;
+    document.getElementById("errorBox").className = "error-box show";
+  }
+
+  function annCap(holeID, pipeOD) { return (holeID * holeID - pipeOD * pipeOD) / 1029.4; }
+  function tbgCap(pipeID)          { return (pipeID  * pipeID)  / 1029.4; }
+
+  function calculate() {
+    document.getElementById("errorBox").className   = "error-box";
+    document.getElementById("resultBox").className  = "result-box";
+
+    // Core
+    const cID   = parseFloat(document.getElementById("casingID").value);
+    const lOD   = parseFloat(document.getElementById("tbgOD").value);
+    const lIDt  = parseFloat(document.getElementById("tbgID").value);
+    const dep   = parseFloat(document.getElementById("depth").value);
+    const pIn   = parseFloat(document.getElementById("pumpIn").value);
+    const pOut  = parseFloat(document.getElementById("pumpOut").value);
+    const sent  = parseTime(document.getElementById("timeSent").value);
+
+    if ([cID, lOD, lIDt, dep, pIn, pOut].some(function(v){ return isNaN(v) || v <= 0; }))
+      return err("All numeric fields required and must be > 0. Check Wellbore tab.");
+    if (!sent)
+      return err("Time format must be HH:MM AM or HH:MM PM");
+    if (lOD >= cID) return err("Tubing OD must be smaller than Casing ID.");
+    if (lIDt >= lOD) return err("Tubing ID must be smaller than Tubing OD.");
+
+    // Split
+    const hasSplit = document.getElementById("splitToggle").checked;
+    let uOD = 0, uID = 0, splitDep = 0;
+    if (hasSplit) {
+      uOD      = parseFloat(document.getElementById("upperOD").value);
+      uID      = parseFloat(document.getElementById("upperID").value);
+      splitDep = parseFloat(document.getElementById("splitDepth").value);
+      if ([uOD, uID, splitDep].some(function(v){ return isNaN(v) || v <= 0; }))
+        return err("Upper string OD, ID, and split depth required. Check Wellbore tab.");
+      if (uID >= uOD) return err("Upper string ID must be smaller than upper string OD.");
+      if (uOD >= cID) return err("Upper string OD must be smaller than Casing ID.");
+      if (lOD >= uOD) return err("Lower string OD should be smaller than upper string OD.");
+      if (splitDep >= dep) return err("Split depth must be shallower than current depth.");
+    }
+
+    // Liner
+    const hasLiner = document.getElementById("linerToggle").checked;
+    let lTop = 0, linerIDval = 0;
+    if (hasLiner) {
+      lTop       = parseFloat(document.getElementById("linerTop").value);
+      linerIDval = parseFloat(document.getElementById("linerID").value);
+      if ([lTop, linerIDval].some(function(v){ return isNaN(v) || v <= 0; }))
+        return err("Liner top and liner ID required. Check Wellbore tab.");
+      if (linerIDval >= cID) return err("Liner ID must be smaller than Casing ID.");
+      if (lOD >= linerIDval) return err("Lower tubing OD must be smaller than Liner ID.");
+    }
+
+    // DOWN LEG
+    let tbgVol = 0;
+    const downSegs = [];
+    if (!hasSplit) {
+      const v = tbgCap(lIDt) * dep;
+      tbgVol = v;
+      downSegs.push({ label: "Down 0–" + dep.toFixed(0) + " ft", vol: v });
+    } else {
+      const depUpper = Math.min(splitDep, dep);
+      const vU = tbgCap(uID) * depUpper;
+      tbgVol += vU;
+      downSegs.push({ label: "Down upper 0–" + depUpper.toFixed(0) + " ft", vol: vU });
+      if (dep > splitDep) {
+        const vL = tbgCap(lIDt) * (dep - splitDep);
+        tbgVol += vL;
+        downSegs.push({ label: "Down lower " + splitDep.toFixed(0) + "–" + dep.toFixed(0) + " ft", vol: vL });
+      }
+    }
+
+    // UP LEG — build critical depth list, walk intervals
+    const critSet = new Set([0, dep]);
+    if (hasSplit && splitDep < dep)  critSet.add(splitDep);
+    if (hasLiner && lTop < dep)      critSet.add(lTop);
+    const depths = Array.from(critSet).sort(function(a,b){ return a-b; });
+
+    let annVol = 0;
+    const upSegs = [];
+    for (let i = 0; i < depths.length - 1; i++) {
+      const d_top = depths[i];
+      const d_bot = depths[i + 1];
+      const mid   = (d_top + d_bot) / 2;
+      const pipeOD = (hasSplit && mid < splitDep) ? uOD : lOD;
+      const holeID = (hasLiner && mid > lTop)     ? linerIDval : cID;
+      const cap = annCap(holeID, pipeOD);
+      if (cap <= 0) return err("Geometry error: pipe OD ≥ hole ID between " + d_top.toFixed(0) + "–" + d_bot.toFixed(0) + " ft");
+      const v = cap * (d_bot - d_top);
+      annVol += v;
+      const hL = (hasLiner && mid > lTop) ? "liner" : "casing";
+      const pL = (hasSplit && mid < splitDep) ? uOD + '" upper' : lOD + '" lower';
+      upSegs.push({ label: "Up " + d_top.toFixed(0) + "–" + d_bot.toFixed(0) + " ft (" + pL + " in " + hL + ")", vol: v });
+    }
+
+    // RESULTS
+    const totalVol = tbgVol + annVol;
+    const minDown  = tbgVol / pIn;
+    const minUp    = annVol / pOut;
+    const totalMin = minDown + minUp;
+    const eta  = new Date(sent.getTime() + totalMin * 60 * 1000);
+    const hrs  = Math.floor(totalMin / 60);
+    const mins = Math.round(totalMin % 60);
+    const durStr = hrs > 0 ? hrs + "h " + mins + "m travel time" : mins + " min travel time";
+
+    document.getElementById("etaTime").textContent    = formatTime(eta);
+    document.getElementById("etaDuration").textContent = durStr;
+    document.getElementById("statTbg").textContent    = tbgVol.toFixed(2)   + " bbl";
+    document.getElementById("statAnn").textContent    = annVol.toFixed(2)   + " bbl";
+    document.getElementById("statTotal").textContent  = totalVol.toFixed(2) + " bbl";
+    document.getElementById("statRate").textContent   = ((pIn+pOut)/2).toFixed(2) + " BPM";
+
+    const allSegs = downSegs.concat(upSegs);
+    let segHTML = "";
+    if (allSegs.length > 1) {
+      segHTML = "<div class=\"seg-title\">Segment Breakdown</div>";
+      allSegs.forEach(function(s) {
+        segHTML += "<div class=\"seg-row\"><span class=\"seg-name\">" + s.label + "</span><span class=\"seg-val\">" + s.vol.toFixed(2) + " bbl</span></div>";
+      });
+    }
+    document.getElementById("segList").innerHTML = segHTML;
+    document.getElementById("resultBox").className = "result-box show";
+  }
 </script>
 </body>
 </html>
